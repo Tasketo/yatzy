@@ -4,6 +4,7 @@ import istanbul from 'vite-plugin-istanbul';
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/yatzy/',
   plugins: [
     react(),
     istanbul({
