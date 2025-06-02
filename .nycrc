@@ -1,0 +1,7 @@
+{
+  "all": true,
+  "extension": [".js", ".ts", ".jsx", ".tsx"],
+  "include": ["src/**/*.{js,ts,jsx,tsx}"],
+  "exclude": ["**/*.d.ts", "**/e2e/**", "**/node_modules/**", "**/playwright.config.ts"],
+  "reporter": ["html", "lcov"]
+}

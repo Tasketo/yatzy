@@ -1,0 +1,8 @@
+# Prettier ignores
+node_modules/
+build/
+dist/
+playwright-report/
+coverage/
+*.log
+test-results/
