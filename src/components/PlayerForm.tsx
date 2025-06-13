@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Input, Button, VStack, HStack, Text, Box } from '@chakra-ui/react';
 
 interface PlayerFormProps {
   onSubmit: (players: string[]) => void;
@@ -41,35 +42,67 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="player-form" data-testid="player-form">
-      <h2>Set players</h2>
+    <Box
+      as="form"
+      onSubmit={handleSubmit}
+      className="player-form"
+      data-testid="player-form"
+      maxW="sm"
+      mx="auto"
+      p={4}
+      borderRadius="md"
+      boxShadow="md"
+      bg="whiteAlpha.900"
+      _dark={{ bg: 'gray.700' }}
+    >
+      <Text as="h2" fontSize="xl" fontWeight="bold" mb={2} color="gray.800" _dark={{ color: 'gray.100' }}>
+        Set players
+      </Text>
       {error && (
-        <div style={{ color: 'red', marginBottom: 8 }} data-testid="player-form-error">
+        <Text color="red.500" mb={2} data-testid="player-form-error">
           {error}
-        </div>
+        </Text>
       )}
-      {names.map((name, idx) => (
-        <div key={idx} className="player-input-row">
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => handleNameChange(idx, e.target.value)}
-            placeholder={`Player ${idx + 1}`}
-            data-testid={`player-input-${idx + 1}`}
-          />
-          {names.length > 1 && (
-            <button type="button" onClick={() => removePlayer(idx)} aria-label="Remove" className="btn-danger">
-              ✕
-            </button>
-          )}
-        </div>
-      ))}
-      <button type="button" onClick={addPlayer} data-testid="add-player-btn" className="btn-secondary">
+      <VStack spacing={3} align="stretch">
+        {names.map((name, idx) => (
+          <HStack key={idx} className="player-input-row">
+            <Input
+              type="text"
+              value={name}
+              onChange={(e) => handleNameChange(idx, e.target.value)}
+              placeholder={`Player ${idx + 1}`}
+              data-testid={`player-input-${idx + 1}`}
+              bg="whiteAlpha.800"
+              _dark={{ bg: 'gray.800' }}
+            />
+            {names.length > 1 && (
+              <Button
+                type="button"
+                onClick={() => removePlayer(idx)}
+                aria-label="Remove"
+                colorScheme="red"
+                variant="ghost"
+                size="sm"
+              >
+                ✕
+              </Button>
+            )}
+          </HStack>
+        ))}
+      </VStack>
+      <Button
+        mt={4}
+        type="button"
+        onClick={addPlayer}
+        data-testid="add-player-btn"
+        colorScheme="blue"
+        variant="outline"
+      >
         + Add player
-      </button>
-      <button type="submit" className="btn-primary" data-testid="start-btn">
+      </Button>
+      <Button mt={2} type="submit" colorScheme="purple" data-testid="start-btn">
         Start
-      </button>
-    </form>
+      </Button>
+    </Box>
   );
 };

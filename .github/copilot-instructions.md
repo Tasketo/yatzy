@@ -6,7 +6,7 @@ For all new features add playwright tests to cover 100% of the code.
 
 When changing the code make sure to fix linting and testing errors. Here are the commands to run:
 
-- `npm run format:check` to run format test. You may can fix errors and warnings using `npm run format`.
+- `npm run format` to run format test. You may can fix errors and warnings using `npm run format:fix`.
 - `npm run lint` to check for linting errors. You may can fix errors and warnings using `npm run lint:fix`.
 - `npm run test:e2e` to run the e2e-tests. Use `npm run coverage:html` to update the coverage report.
 

@@ -1,3 +1,4 @@
+import { Box, Button, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { PlayerForm } from './components/PlayerForm';
 import { ScoreSheet } from './components/ScoreSheet';
 import { Scoreboard } from './components/Scoreboard';
@@ -5,8 +6,7 @@ import { RoundNav } from './components/RoundNav';
 import { useYatzyGame } from './hooks/useYatzyGame';
 import { UPPER_CATEGORIES, LOWER_CATEGORIES } from './utils/yatzyCategories';
 import { getRandomColor } from './utils/getRandomColor';
-import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 function App() {
   const {
@@ -25,18 +25,17 @@ function App() {
     setPlayerColors,
   } = useYatzyGame();
 
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
-  });
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  const eyecatcherBg = useColorModeValue(
+    'linear-gradient(90deg, #ff9800 0%, #f44336 100%)',
+    'linear-gradient(90deg, #ff9800 0%, #8ab4f8 100%)',
+  );
+  const eyecatcherText = useColorModeValue('white', 'gray.900');
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
+    document.documentElement.setAttribute('data-theme', colorMode);
+  }, [colorMode]);
 
   // Handler to change player color
   const handlePlayerColorChange = (player: string) => {
@@ -52,22 +51,43 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <div className="yatzy-eyecatcher">Yatzy</div>
-      <button
-        className="theme-toggle-btn"
-        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        onClick={toggleTheme}
-        style={{ position: 'absolute', top: 18, right: 24 }}
-        data-testid="theme-toggle-btn"
+    <Box className="app-container" position="relative">
+      <Box
+        width="100%"
+        borderRadius="1.2em 1.2em 0.2em 0.2em"
+        boxShadow="0 4px 24px 0 rgba(244, 67, 54, 0.1)"
+        bg={eyecatcherBg}
+        color={eyecatcherText}
+        fontFamily="'Montserrat', 'Segoe UI', Arial, sans-serif"
+        fontSize={{ base: '2xl', md: '2.5rem' }}
+        fontWeight={900}
+        letterSpacing="0.08em"
+        mb={4}
+        py={3}
+        px={6}
+        textAlign="center"
+        textShadow="0 2px 8px rgba(0,0,0,0.1)"
+        transition="transform 0.2s"
+        userSelect="none"
+        _hover={{ boxShadow: '0 8px 32px 0 rgba(244, 67, 54, 0.18)', transform: 'scale(1.04) rotate(-2deg)' }}
+        className="yatzy-eyecatcher"
+        data-testid="eyecatcher"
       >
-        {theme === 'light' ? '🌙' : '☀️'}
-      </button>
-      {players && page === 'game' && (
-        <button className="btn-danger" data-testid="reset-btn" onClick={handleReset}>
-          Reset game
-        </button>
-      )}
+        Yatzy
+      </Box>
+      <Button
+        className="theme-toggle-btn"
+        aria-label={`Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`}
+        onClick={toggleColorMode}
+        position="absolute"
+        top={4}
+        right={6}
+        data-testid="theme-toggle-btn"
+        variant="ghost"
+        fontSize="xl"
+      >
+        {colorMode === 'light' ? '🌙' : '☀️'}
+      </Button>
       {!players ? (
         <PlayerForm onSubmit={handlePlayersSubmit} />
       ) : page === 'game' ? (
@@ -82,30 +102,20 @@ function App() {
             playerColors={playerColors}
             onPlayerColorChange={handlePlayerColorChange}
           />
-          <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <button
+          <Box mt={6} textAlign="center">
+            <Button
               onClick={handleFinishRound}
               data-testid="finish-round-btn"
+              colorScheme="purple"
               disabled={!allFieldsFilled}
-              style={{
-                margin: '0 auto',
-                display: 'block',
-                background: allFieldsFilled ? '#646cff' : '#ccc',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '0.5em',
-                padding: '0.7em 2em',
-                fontSize: '1.1em',
-                cursor: allFieldsFilled ? 'pointer' : 'not-allowed',
-                opacity: allFieldsFilled ? 1 : 0.7,
-              }}
+              size="lg"
             >
               Submit round & Show scoreboard
-            </button>
-          </div>
+            </Button>
+          </Box>
         </>
       ) : (
-        <div>
+        <Box>
           {scoresPerRound.length > 1 && (
             <RoundNav rounds={scoresPerRound.length} currentRound={currentRound} onGoToRound={handleGoToRound} />
           )}
@@ -119,7 +129,7 @@ function App() {
                   (a, b) => a + b,
                   0,
                 );
-                const bonus = upperSum > 62 ? 50 : 0;
+                const bonus = upperSum > 62 ? 35 : 0;
                 const lowerSum = LOWER_CATEGORIES.map((cat) => parseInt(round[player]?.[cat] || '0', 10)).reduce(
                   (a, b) => a + b,
                   0,
@@ -130,17 +140,26 @@ function App() {
             })}
             playerColors={playerColors}
           />
-          <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <button onClick={handlePlayNewRound} data-testid="play-new-round-btn" className="btn-primary">
+          <Box mt={6} textAlign="center">
+            <Button onClick={handlePlayNewRound} data-testid="play-new-round-btn" colorScheme="blue">
               Play new round
-            </button>
-            <button onClick={handleReset} data-testid="reset-btn-scoreboard" className="btn-danger">
-              Reset game
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
-    </div>
+      {players && (
+        <Box mt={10} textAlign="center">
+          <Button
+            colorScheme="red"
+            variant="outline"
+            data-testid={page === 'game' ? 'reset-btn' : 'reset-btn-scoreboard'}
+            onClick={handleReset}
+          >
+            Reset game
+          </Button>
+        </Box>
+      )}
+    </Box>
   );
 }
 

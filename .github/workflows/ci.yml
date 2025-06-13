@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Check code format with Prettier
-        run: npm run format:check
+        run: npm run format
 
       - name: Lint with ESLint
         run: npm run lint

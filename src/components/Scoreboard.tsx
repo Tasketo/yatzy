@@ -1,5 +1,6 @@
 import React from 'react';
 import { getRoundWinners } from '../utils/getRoundWinners';
+import { Table, Thead, Tbody, Tr, Th, Td, Box, Text } from '@chakra-ui/react';
 
 interface ScoreboardProps {
   players: string[];
@@ -28,29 +29,35 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
   const overallWinners = players.filter((player) => roundWins[player] === maxWins && maxWins > 0);
 
   return (
-    <div className="scoreboard" data-testid="scoreboard">
-      <h2>Scoreboard</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Round</th>
+    <Box
+      className="scoreboard"
+      data-testid="scoreboard"
+      borderRadius="lg"
+      boxShadow="md"
+      p={4}
+      bg="whiteAlpha.900"
+      _dark={{ bg: 'gray.700' }}
+    >
+      <Text as="h2" fontSize="xl" fontWeight="bold" mb={4} color="gray.800" _dark={{ color: 'gray.100' }}>
+        Scoreboard
+      </Text>
+      <Table variant="simple" size="sm">
+        <Thead>
+          <Tr>
+            <Th>Round</Th>
             {players.map((player) => (
-              <th key={player} style={{ color: playerColors[player] }}>
+              <Th key={player} color={playerColors[player]}>
                 {player}
-              </th>
+              </Th>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </Tr>
+        </Thead>
+        <Tbody>
           {rounds.map((round, idx) => (
-            <tr key={idx} data-testid={`scoreboard-row-${idx}`}>
-              <td>{idx + 1}</td>
+            <Tr key={idx} data-testid={`scoreboard-row-${idx}`}>
+              <Td>{idx + 1}</Td>
               {players.map((player) => (
-                <td
-                  key={player}
-                  className={roundWinners[idx].includes(player) ? 'scoreboard-winner-cell' : ''}
-                  style={roundWinners[idx].includes(player) ? { fontWeight: 700, background: '#eaf7ea' } : {}}
-                >
+                <Td key={player} fontWeight={roundWinners[idx].includes(player) ? 700 : undefined}>
                   {round[player] ?? '-'}
                   {roundWinners[idx].includes(player) ? (
                     <span role="img" aria-label="Winner" className="trophy-animate">
@@ -59,44 +66,36 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
                   ) : (
                     ''
                   )}
-                </td>
+                </Td>
               ))}
-            </tr>
+            </Tr>
           ))}
-          <tr className="scoreboard-total-row" data-testid="scoreboard-total-row">
-            <td>Total</td>
+          <Tr className="scoreboard-total-row" data-testid="scoreboard-total-row">
+            <Td>Total</Td>
             {players.map((player) => (
-              <td key={player}>
+              <Td key={player} fontWeight={700}>
                 {totals[player]}
                 {overallWinners.includes(player) ? (
                   <span role="img" aria-label="Winner">
-                    {' '}
                     🏆
                   </span>
                 ) : (
                   ''
                 )}
-              </td>
+              </Td>
             ))}
-          </tr>
-        </tbody>
-      </table>
+          </Tr>
+        </Tbody>
+      </Table>
       {overallWinners.length === 1 ? (
-        <div
-          style={{
-            marginTop: 16,
-            fontWeight: 700,
-            color: playerColors[overallWinners[0]],
-          }}
-          data-testid="overall-winner"
-        >
+        <Text mt={4} fontWeight={700} color={playerColors[overallWinners[0]]} data-testid="overall-winner">
           Winner: {overallWinners[0]}
-        </div>
+        </Text>
       ) : (
-        <div style={{ marginTop: 16, fontWeight: 700 }} data-testid="overall-winner">
+        <Text mt={4} fontWeight={700} data-testid="overall-winner">
           Winners: {overallWinners.join(', ')}
-        </div>
+        </Text>
       )}
-    </div>
+    </Box>
   );
 };

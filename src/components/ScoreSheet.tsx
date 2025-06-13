@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { LOWER_CATEGORIES, UPPER_CATEGORIES, type YatzyCategory } from '../utils/yatzyCategories';
+import { Table, Thead, Tbody, Tr, Th, Td, Box, Input as ChakraInput, Checkbox } from '@chakra-ui/react';
 
 interface ScoreSheetProps {
   players: string[];
@@ -24,19 +25,26 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   }, [scores]);
 
   return (
-    <div className="score-sheet-modern" data-testid="score-sheet">
-      <table>
-        <thead>
-          <tr>
-            <th>Name:</th>
+    <Box
+      className="score-sheet-modern"
+      data-testid="score-sheet"
+      borderRadius="lg"
+      boxShadow="md"
+      p={4}
+      bg="whiteAlpha.900"
+      _dark={{ bg: 'gray.700' }}
+    >
+      <Table variant="simple" size="sm">
+        <Thead>
+          <Tr>
+            <Th>Name:</Th>
             {players.map((player) => (
-              <th
+              <Th
                 key={player}
-                style={{
-                  color: playerColors[player],
-                  fontWeight: 700,
-                  cursor: onPlayerColorChange ? 'pointer' : 'default',
-                }}
+                color={playerColors[player]}
+                textAlign="center"
+                fontWeight={700}
+                cursor={onPlayerColorChange ? 'pointer' : 'default'}
                 onClick={onPlayerColorChange ? () => onPlayerColorChange(player) : undefined}
                 title={onPlayerColorChange ? 'Click to change color' : undefined}
                 tabIndex={onPlayerColorChange ? 0 : undefined}
@@ -51,60 +59,63 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 data-testid={`player-color-${player}`}
               >
                 {player}
-              </th>
+              </Th>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </Tr>
+        </Thead>
+        <Tbody>
           {/* Upper section */}
           {UPPER_CATEGORIES.map((category, idx) => (
-            <tr key={category}>
-              <td className="category-label">{category}</td>
+            <Tr key={category}>
+              <Td className="category-label">{category}</Td>
               {players.map((player) => {
                 const prev = prevScores.current?.[player]?.[category];
                 const curr = scores[player]?.[category];
                 const changed = prev !== undefined && prev !== curr;
                 return (
-                  <td key={player} style={{ color: playerColors[player] }}>
-                    <input
+                  <Td key={player} color={playerColors[player]}>
+                    <ChakraInput
                       type="number"
-                      min="0"
-                      max="999"
+                      textAlign="center"
+                      min={0}
+                      max={999}
                       value={curr ?? ''}
                       onChange={(e) => onScoreChange(player, category, e.target.value)}
                       inputMode="numeric"
                       className={`score-input${changed ? ' score-input-animate' : ''}`}
-                      style={{ color: playerColors[player] }}
+                      color={playerColors[player]}
                       data-testid={`score-input-row-${idx + 1}-${player}`}
+                      size="sm"
                     />
-                  </td>
+                  </Td>
                 );
               })}
-            </tr>
+            </Tr>
           ))}
           {/* Sum row */}
-          <tr className="sum-row">
-            <td className="category-label">Sum</td>
+          <Tr className="sum-row">
+            <Td className="category-label">Sum</Td>
             {players.map((player) => {
               const sum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
                 (a, b) => a + b,
                 0,
               );
               return (
-                <td
+                <Td
+                  textAlign="center"
                   key={player}
-                  className="sum-cell"
-                  style={{ color: playerColors[player] }}
+                  color={playerColors[player]}
                   data-testid={`sum-cell-${player}`}
+                  fontWeight={700}
                 >
                   {sum}
-                </td>
+                </Td>
               );
             })}
-          </tr>
+          </Tr>
           {/* Bonus row */}
-          <tr className="bonus-row">
-            <td className="category-label">Bonus</td>
+          <Tr className="bonus-row">
+            <Td className="category-label">Bonus</Td>
             {players.map((player) => {
               const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
                 (a, b) => a + b,
@@ -112,27 +123,28 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
               );
               const hasBonus = upperSum > 62;
               return (
-                <td key={player} style={{ textAlign: 'center' }}>
-                  <input
-                    type="checkbox"
-                    checked={hasBonus}
-                    readOnly
-                    style={{
+                <Td key={player} textAlign="center">
+                  <Checkbox
+                    isChecked={hasBonus}
+                    isReadOnly
+                    colorScheme="green"
+                    iconColor={playerColors[player]}
+                    aria-label={hasBonus ? 'Bonus reached' : 'No bonus'}
+                    data-testid={`bonus-checkbox-${player}`}
+                    sx={{
                       accentColor: playerColors[player],
                       width: '1.2em',
                       height: '1.2em',
                       cursor: 'default',
                     }}
-                    aria-label={hasBonus ? 'Bonus reached' : 'No bonus'}
-                    data-testid={`bonus-checkbox-${player}`}
                   />
-                </td>
+                </Td>
               );
             })}
-          </tr>
-          <tr>
-            <td colSpan={players.length + 1} className="section-divider"></td>
-          </tr>
+          </Tr>
+          <Tr>
+            <Td colSpan={players.length + 1} className="section-divider"></Td>
+          </Tr>
           {/* Lower section */}
           {LOWER_CATEGORIES.map((category, idx) => {
             let tooltip = '';
@@ -150,54 +162,56 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 tooltip = 'Sum of four matching dice.';
                 break;
               case 'Small Straight':
-                tooltip = '1-2-3-4-5 (any order). Scores 15 points.';
+                tooltip = 'For dices in a row (e.g. 1-2-3-4). Score 30 points.';
                 break;
               case 'Large Straight':
-                tooltip = '2-3-4-5-6 (any order). Scores 20 points.';
+                tooltip = 'For dices in a row (e.g. 1-2-3-4-5). Scores 40 points.';
                 break;
               case 'Full House':
-                tooltip = 'A pair and three of a kind (e.g., 2-2-3-3-3). Scores the sum of all dice.';
+                tooltip = 'A pair and three of a kind (e.g., 2-2-3-3-3). Scores 25 points.';
                 break;
               case 'Chance':
                 tooltip = 'Sum of all dice (any combination).';
                 break;
               case 'Yatzy':
-                tooltip = 'All five dice the same. Scores 50 points.';
+                tooltip = 'All five dice the same. Scores 35 points.';
                 break;
               default:
                 tooltip = '';
             }
             return (
-              <tr key={category}>
-                <td className="category-label" title={tooltip}>
+              <Tr key={category}>
+                <Td className="category-label" title={tooltip}>
                   {category}
-                </td>
+                </Td>
                 {players.map((player) => {
-                  const prev = prevScores.current?.[player]?.[category];
-                  const curr = scores[player]?.[category];
+                  const prev = prevScores.current?.[player]?.[category as YatzyCategory];
+                  const curr = scores[player]?.[category as YatzyCategory];
                   const changed = prev !== undefined && prev !== curr;
                   return (
-                    <td key={player} style={{ color: playerColors[player] }}>
-                      <input
+                    <Td key={player} color={playerColors[player]}>
+                      <ChakraInput
                         type="number"
-                        min="0"
-                        max="999"
+                        textAlign="center"
+                        min={0}
+                        max={999}
                         value={curr ?? ''}
-                        onChange={(e) => onScoreChange(player, category, e.target.value)}
+                        onChange={(e) => onScoreChange(player, category as YatzyCategory, e.target.value)}
                         inputMode="numeric"
                         className={`score-input${changed ? ' score-input-animate' : ''}`}
-                        style={{ color: playerColors[player] }}
+                        color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1 + UPPER_CATEGORIES.length}-${player}`}
+                        size="sm"
                       />
-                    </td>
+                    </Td>
                   );
                 })}
-              </tr>
+              </Tr>
             );
           })}
           {/* Total row */}
-          <tr className="sum-row">
-            <td className="category-label">Total</td>
+          <Tr className="sum-row">
+            <Td className="category-label">Total</Td>
             {players.map((player) => {
               // Upper section sum
               const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
@@ -205,7 +219,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 0,
               );
               // Bonus
-              const bonus = upperSum > 62 ? 50 : 0;
+              const bonus = upperSum > 62 ? 35 : 0;
               // Lower section sum
               const lowerSum = LOWER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
                 (a, b) => a + b,
@@ -214,19 +228,21 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
               // Total
               const total = upperSum + bonus + lowerSum;
               return (
-                <td
+                <Td
+                  textAlign="center"
                   key={player}
                   className="sum-cell"
-                  style={{ color: playerColors[player] }}
+                  color={playerColors[player]}
                   data-testid={`endsum-cell-${player}`}
+                  fontWeight={700}
                 >
                   {total}
-                </td>
+                </Td>
               );
             })}
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          </Tr>
+        </Tbody>
+      </Table>
+    </Box>
   );
 };

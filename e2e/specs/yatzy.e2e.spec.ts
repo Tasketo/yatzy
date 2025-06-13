@@ -127,6 +127,7 @@ test.describe('Yatzy App E2E', () => {
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Alice');
     await page.getByTestId('play-new-round-btn').click();
+    await expect(page.getByTestId('score-sheet')).toBeVisible();
     // Round 2: Bob wins
     for (let i = 0; i < 15; i++) {
       await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('1');

@@ -1,102 +1,41 @@
-/* General/global styles */
-:root {
-  background-color: #242424;
-  color: #1a1a1a;
-  color-scheme: light dark;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-synthesis: none;
-  font-weight: 400;
-  line-height: 1.5;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  --color-bg: #fff;
-  --color-bg-secondary: #fafbfc;
-  --color-border: #e3e6ea;
-  --color-btn-bg: #646cff;
-  --color-btn-bg-disabled: #ccc;
-  --color-btn-text: #fff;
-  --color-card: #f7f7fa;
-  --color-eyecatcher-bg: linear-gradient(90deg, #ff9800 0%, #f44336 100%);
-  --color-eyecatcher-text: #fff;
-  --color-primary: #646cff;
-  --color-reset-bg: #fff3e0;
-  --color-reset-bg-hover: #ffe0b2;
-  --color-reset-border: #ff9800;
-  --color-reset-border-hover: #f44336;
-  --color-reset-text: #d84315;
-  --color-reset-text-hover: #bf360c;
-  --color-text: #222;
+.trophy-animate {
+  animation: trophy-bounce 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  display: inline-block;
+  font-size: 1.2em;
+  margin-left: 0.2em;
 }
-
-[data-theme='dark'] {
-  --color-bg: #181a1b;
-  --color-bg-secondary: #23272e;
-  --color-border: #2c2f36;
-  --color-btn-bg: #8ab4f8;
-  --color-btn-bg-disabled: #444;
-  --color-btn-text: #181a1b;
-  --color-card: #23272e;
-  --color-eyecatcher-bg: linear-gradient(90deg, #ff9800 0%, #f44336 100%);
-  --color-eyecatcher-text: #fff;
-  --color-primary: #8ab4f8;
-  --color-reset-bg: #2c2f36;
-  --color-reset-bg-hover: #3c3f46;
-  --color-reset-border: #ff9800;
-  --color-reset-border-hover: #f44336;
-  --color-reset-text: #ffd54f;
-  --color-reset-text-hover: #fffde7;
-  --color-text: #f3f3f3;
-}
-
-a {
-  color: #646cff;
-  font-weight: 500;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  display: flex;
-  margin: 0;
-  min-height: 100vh;
-  min-width: 320px;
-  place-items: center;
-}
-
-button {
-  background-color: #1a1a1a;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 1em;
-  font-weight: 500;
-  padding: 0.6em 1.2em;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    background-color: #ffffff;
-    color: #213547;
+@keyframes trophy-bounce {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.7) translateY(-10px);
   }
-  a:hover {
-    color: #747bff;
+  60% {
+    opacity: 1;
+    transform: scale(1.2) translateY(2px);
   }
-  button {
-    background-color: #f9f9f9;
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
+}
+
+.yatzy-eyecatcher {
+  background: var(--color-eyecatcher-bg);
+  border-radius: 1.2em 1.2em 0.2em 0.2em;
+  box-shadow: 0 4px 24px 0 rgba(244, 67, 54, 0.1);
+  color: var(--color-eyecatcher-text);
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin: 0 auto 0.7em auto;
+  padding: 0.5em 1.5em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  user-select: none;
+  width: fit-content;
+}
+.yatzy-eyecatcher:hover {
+  box-shadow: 0 8px 32px 0 rgba(244, 67, 54, 0.18);
+  transform: scale(1.04) rotate(-2deg);
 }

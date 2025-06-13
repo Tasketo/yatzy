@@ -11,13 +11,17 @@
     "test:e2e": "playwright test",
     "playwright:install": "playwright install --with-deps",
     "lint:fix": "npm run lint --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "format": "prettier --check .",
     "coverage:merge": "nyc merge coverage/playwright coverage/coverage-final.json",
     "coverage:report": "nyc report --reporter=html --report-dir=coverage/html --temp-dir=coverage",
     "coverage:html": "npm run coverage:merge && npm run coverage:report"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.10.9",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "framer-motion": "^12.18.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

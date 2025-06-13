@@ -1,3 +1,4 @@
+import { Button, Wrap } from '@chakra-ui/react';
 import React from 'react';
 
 interface RoundNavProps {
@@ -7,20 +8,20 @@ interface RoundNavProps {
 }
 
 export const RoundNav: React.FC<RoundNavProps> = ({ rounds, currentRound, onGoToRound }) => (
-  <div style={{ marginBottom: 16, marginTop: 32 }}>
+  <Wrap mb={4} mt={8}>
     {Array.from({ length: rounds }).map((_, idx) => (
-      <button
+      <Button
         key={idx}
         onClick={() => onGoToRound(idx)}
-        style={{
-          fontWeight: idx === currentRound ? 'bold' : undefined,
-          marginRight: 4,
-        }}
+        fontWeight={idx === currentRound ? 'bold' : undefined}
+        mr={1}
         data-testid={`round-btn-${idx}`}
-        className="btn-secondary"
+        colorScheme={idx === currentRound ? 'purple' : 'gray'}
+        variant={idx === currentRound ? 'solid' : 'outline'}
+        size="sm"
       >
         Round {idx + 1}
-      </button>
+      </Button>
     ))}
-  </div>
+  </Wrap>
 );

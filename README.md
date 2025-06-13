@@ -37,8 +37,8 @@ Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Linting & Formatting
 
-- Check formatting: `npm run format:check`
-- Fix formatting: `npm run format`
+- Check formatting: `npm run format`
+- Fix formatting: `npm run format:fix`
 - Check linting: `npm run lint`
 - Fix linting: `npm run lint:fix`
 
