@@ -1,4 +1,4 @@
-import { Box, Button, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useRef } from 'react';
 import { PlayerForm } from './components/PlayerForm';
 import { ScoreSheet } from './components/ScoreSheet';
@@ -8,6 +8,8 @@ import { useYatzyGame } from './hooks/useYatzyGame';
 import { UPPER_CATEGORIES, LOWER_CATEGORIES } from './utils/yatzyCategories';
 import { getRandomColor } from './utils/getRandomColor';
 import { ResetConfirmationDialog } from './components/ResetConfirmationDialog';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const {
@@ -27,6 +29,7 @@ function App() {
   } = useYatzyGame();
 
   const { colorMode, toggleColorMode } = useColorMode();
+  const { t } = useTranslation();
 
   const eyecatcherBg = useColorModeValue(
     'linear-gradient(90deg, #ff9800 0%, #f44336 100%)',
@@ -55,7 +58,21 @@ function App() {
   const cancelRef = useRef<HTMLButtonElement>(null!); // non-null assertion to satisfy type
 
   return (
-    <Box className="app-container" position="relative">
+    <Box position="relative" mt={2}>
+      <Flex justifyContent="end">
+        <LanguageSwitcher />
+
+        <Button
+          aria-label={`Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`}
+          onClick={toggleColorMode}
+          data-testid="theme-toggle-btn"
+          variant="ghost"
+          size="sm"
+        >
+          {colorMode === 'light' ? '🌙' : '☀️'}
+        </Button>
+      </Flex>
+
       <Box
         width="100%"
         borderRadius="1.2em 1.2em 0.2em 0.2em"
@@ -79,19 +96,6 @@ function App() {
       >
         Yatzy
       </Box>
-      <Button
-        className="theme-toggle-btn"
-        aria-label={`Switch to ${colorMode === 'light' ? 'dark' : 'light'} mode`}
-        onClick={toggleColorMode}
-        position="absolute"
-        top={4}
-        right={6}
-        data-testid="theme-toggle-btn"
-        variant="ghost"
-        fontSize="xl"
-      >
-        {colorMode === 'light' ? '🌙' : '☀️'}
-      </Button>
       {!players ? (
         <PlayerForm onSubmit={handlePlayersSubmit} />
       ) : page === 'game' ? (
@@ -114,7 +118,7 @@ function App() {
               disabled={!allFieldsFilled}
               size="lg"
             >
-              {currentRound === scoresPerRound.length - 1 ? 'Submit' : 'Show Scoreboard'}
+              {currentRound === scoresPerRound.length - 1 ? t('Submit') : t('Show Scoreboard')}
             </Button>
           </Box>
         </>

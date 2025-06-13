@@ -8,6 +8,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import type { RefObject } from 'react';
+import { Trans } from 'react-i18next';
 
 interface ResetConfirmationDialogProps {
   isOpen: boolean;
@@ -22,17 +23,17 @@ export function ResetConfirmationDialog({ isOpen, onClose, onReset, cancelRef }:
       <AlertDialogOverlay data-testid="ResetConfirmationDialog">
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Reset Game
+            <Trans>Reset Game</Trans>
           </AlertDialogHeader>
           <AlertDialogBody>
-            Are you sure you want to reset the game? This will clear all players and scores.
+            <Trans>Are you sure you want to reset the game? This will clear all players and scores.</Trans>
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose} data-testid="cancel-reset-btn">
-              Cancel
+              <Trans>Cancel</Trans>
             </Button>
             <Button colorScheme="red" onClick={onReset} ml={3} data-testid="confirm-reset-btn">
-              Reset
+              <Trans>Reset</Trans>
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

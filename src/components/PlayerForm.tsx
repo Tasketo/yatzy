@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Input, Button, VStack, HStack, Text, Box } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 interface PlayerFormProps {
   onSubmit: (players: string[]) => void;
 }
 
 export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
+  const { t } = useTranslation();
   const [names, setNames] = useState<string[]>(['']);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,11 +32,11 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
     const filtered = names.map((n) => n.trim()).filter(Boolean);
     const hasDuplicates = new Set(filtered).size !== filtered.length;
     if (hasDuplicates) {
-      setError('Duplicate player names are not allowed.');
+      setError(t('Duplicate player names are not allowed.'));
       return;
     }
     if (filtered.length === 0) {
-      setError('Please enter at least one player');
+      setError(t('Please enter at least one player'));
       return;
     }
     setError(null);
@@ -56,7 +58,7 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
       _dark={{ bg: 'gray.700' }}
     >
       <Text as="h2" fontSize="xl" fontWeight="bold" mb={2} color="gray.800" _dark={{ color: 'gray.100' }}>
-        Set players
+        {t('Set players')}
       </Text>
       {error && (
         <Text color="red.500" mb={2} data-testid="player-form-error">
@@ -65,12 +67,12 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
       )}
       <VStack spacing={3} align="stretch">
         {names.map((name, idx) => (
-          <HStack key={idx} className="player-input-row">
+          <HStack key={idx}>
             <Input
               type="text"
               value={name}
               onChange={(e) => handleNameChange(idx, e.target.value)}
-              placeholder={`Player ${idx + 1}`}
+              placeholder={t('Player Name') + ` ${idx + 1}`}
               data-testid={`player-input-${idx + 1}`}
               bg="whiteAlpha.800"
               _dark={{ bg: 'gray.800' }}
@@ -78,31 +80,24 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
             {names.length > 1 && (
               <Button
                 type="button"
-                onClick={() => removePlayer(idx)}
-                aria-label="Remove"
                 colorScheme="red"
-                variant="ghost"
                 size="sm"
+                onClick={() => removePlayer(idx)}
+                aria-label={t('Remove Player')}
+                data-testid={`remove-player-btn-${idx + 1}`}
               >
-                ✕
+                -
               </Button>
             )}
           </HStack>
         ))}
+        <Button type="button" colorScheme="teal" onClick={addPlayer} mb={2} data-testid="add-player-btn">
+          {t('Add Player')}
+        </Button>
+        <Button type="submit" colorScheme="blue" w="full" data-testid="start-btn">
+          {t('Start Game')}
+        </Button>
       </VStack>
-      <Button
-        mt={4}
-        type="button"
-        onClick={addPlayer}
-        data-testid="add-player-btn"
-        colorScheme="blue"
-        variant="outline"
-      >
-        + Add player
-      </Button>
-      <Button mt={2} type="submit" colorScheme="purple" data-testid="start-btn">
-        Start
-      </Button>
     </Box>
   );
 };

@@ -7,6 +7,7 @@ import {
 } from '../utils/yatzyCategories';
 import { CategoryInfoModal } from './CategoryInfoModal';
 import { Table, Thead, Tbody, Tr, Th, Td, Box, Input as ChakraInput, Checkbox, useDisclosure } from '@chakra-ui/react';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface ScoreSheetProps {
   players: string[];
@@ -23,6 +24,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   playerColors,
   onPlayerColorChange,
 }) => {
+  const { t } = useTranslation();
   // Track previous values for animation
   const prevScores = useRef<Record<string, Record<YatzyCategory, string>>>({});
 
@@ -36,7 +38,6 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
 
   return (
     <Box
-      className="score-sheet-modern"
       data-testid="score-sheet"
       borderRadius="lg"
       boxShadow="md"
@@ -47,7 +48,9 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
       <Table variant="simple" size="sm">
         <Thead>
           <Tr>
-            <Th>Name:</Th>
+            <Th>
+              <Trans>Name</Trans>:
+            </Th>
             {players.map((player) => (
               <Th
                 key={player}
@@ -56,7 +59,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 fontWeight={700}
                 cursor={onPlayerColorChange ? 'pointer' : 'default'}
                 onClick={onPlayerColorChange ? () => onPlayerColorChange(player) : undefined}
-                title={onPlayerColorChange ? 'Click to change color' : undefined}
+                title={onPlayerColorChange ? t('Click to change color') : undefined}
                 tabIndex={onPlayerColorChange ? 0 : undefined}
                 onKeyDown={
                   onPlayerColorChange
@@ -65,7 +68,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                       }
                     : undefined
                 }
-                aria-label={onPlayerColorChange ? `Change color for ${player}` : undefined}
+                aria-label={onPlayerColorChange ? t('Change color for {{player}}', { player }) : undefined}
                 data-testid={`player-color-${player}`}
               >
                 {player}
@@ -75,36 +78,52 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
         </Thead>
         <Tbody>
           {/* Upper section */}
-          {UPPER_CATEGORIES.map((category, idx) => (
-            <Tr key={category}>
-              <Td className="category-label">{category}</Td>
-              {players.map((player) => {
-                const prev = prevScores.current?.[player]?.[category];
-                const curr = scores[player]?.[category];
-                const changed = prev !== undefined && prev !== curr;
-                return (
-                  <Td key={player} color={playerColors[player]}>
-                    <ChakraInput
-                      type="number"
-                      textAlign="center"
-                      min={0}
-                      max={999}
-                      value={curr ?? ''}
-                      onChange={(e) => onScoreChange(player, category, e.target.value)}
-                      inputMode="numeric"
-                      className={`score-input${changed ? ' score-input-animate' : ''}`}
-                      color={playerColors[player]}
-                      data-testid={`score-input-row-${idx + 1}-${player}`}
-                      size="sm"
-                    />
-                  </Td>
-                );
-              })}
-            </Tr>
-          ))}
+          {UPPER_CATEGORIES.map((category, idx) => {
+            const tooltip = YATZY_CATEGORY_HELPERS[category] || '';
+            return (
+              <Tr key={category}>
+                <Td
+                  tabIndex={0}
+                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  onClick={() => {
+                    if (tooltip) {
+                      setModalInfo({ title: t(category), body: t(tooltip) });
+                      onOpen();
+                    }
+                  }}
+                  aria-label={tooltip ? `Show info for ${category}` : undefined}
+                  data-testid={`category-info-${category}`}
+                  title={tooltip}
+                >
+                  <Trans>{category}</Trans>
+                </Td>
+                {players.map((player) => {
+                  const curr = scores[player]?.[category];
+                  return (
+                    <Td key={player} color={playerColors[player]}>
+                      <ChakraInput
+                        type="number"
+                        textAlign="center"
+                        min={0}
+                        max={999}
+                        value={curr ?? ''}
+                        onChange={(e) => onScoreChange(player, category, e.target.value)}
+                        inputMode="numeric"
+                        color={playerColors[player]}
+                        data-testid={`score-input-row-${idx + 1}-${player}`}
+                        size="sm"
+                      />
+                    </Td>
+                  );
+                })}
+              </Tr>
+            );
+          })}
           {/* Sum row */}
-          <Tr className="sum-row">
-            <Td className="category-label">Sum</Td>
+          <Tr>
+            <Td fontWeight="bold">
+              <Trans>Sum</Trans>
+            </Td>
             {players.map((player) => {
               const sum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
                 (a, b) => a + b,
@@ -124,8 +143,10 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
             })}
           </Tr>
           {/* Bonus row */}
-          <Tr className="bonus-row">
-            <Td className="category-label">Bonus</Td>
+          <Tr>
+            <Td fontStyle="italic">
+              <Trans>Bonus</Trans>
+            </Td>
             {players.map((player) => {
               const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
                 (a, b) => a + b,
@@ -153,7 +174,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
             })}
           </Tr>
           <Tr>
-            <Td colSpan={players.length + 1} className="section-divider"></Td>
+            <Td colSpan={players.length + 1}></Td>
           </Tr>
           {/* Lower section */}
           {LOWER_CATEGORIES.map((category, idx) => {
@@ -161,12 +182,11 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
             return (
               <Tr key={category}>
                 <Td
-                  className="category-label"
                   tabIndex={0}
                   style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
                   onClick={() => {
                     if (tooltip) {
-                      setModalInfo({ title: category, body: tooltip });
+                      setModalInfo({ title: t(category), body: t(tooltip) });
                       onOpen();
                     }
                   }}
@@ -174,12 +194,10 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                   data-testid={`category-info-${category}`}
                   title={tooltip}
                 >
-                  {category}
+                  <Trans>{category}</Trans>
                 </Td>
                 {players.map((player) => {
-                  const prev = prevScores.current?.[player]?.[category as YatzyCategory];
                   const curr = scores[player]?.[category as YatzyCategory];
-                  const changed = prev !== undefined && prev !== curr;
                   return (
                     <Td key={player} color={playerColors[player]}>
                       <ChakraInput
@@ -190,7 +208,6 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                         value={curr ?? ''}
                         onChange={(e) => onScoreChange(player, category as YatzyCategory, e.target.value)}
                         inputMode="numeric"
-                        className={`score-input${changed ? ' score-input-animate' : ''}`}
                         color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1 + UPPER_CATEGORIES.length}-${player}`}
                         size="sm"
@@ -202,8 +219,10 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
             );
           })}
           {/* Total row */}
-          <Tr className="sum-row">
-            <Td className="category-label">Total</Td>
+          <Tr>
+            <Td fontWeight="bold">
+              <Trans>Total</Trans>
+            </Td>
             {players.map((player) => {
               // Upper section sum
               const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
@@ -223,7 +242,6 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 <Td
                   textAlign="center"
                   key={player}
-                  className="sum-cell"
                   color={playerColors[player]}
                   data-testid={`endsum-cell-${player}`}
                   fontWeight={700}

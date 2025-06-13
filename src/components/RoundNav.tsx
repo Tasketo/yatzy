@@ -1,5 +1,6 @@
 import { Button, Wrap } from '@chakra-ui/react';
 import React from 'react';
+import { Trans } from 'react-i18next';
 
 interface RoundNavProps {
   rounds: number;
@@ -20,7 +21,7 @@ export const RoundNav: React.FC<RoundNavProps> = ({ rounds, currentRound, onGoTo
         variant={idx === currentRound ? 'solid' : 'outline'}
         size="sm"
       >
-        Round {idx + 1}
+        <Trans>Round</Trans> {idx + 1}
       </Button>
     ))}
   </Wrap>

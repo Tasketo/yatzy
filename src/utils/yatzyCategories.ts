@@ -42,9 +42,9 @@ export const YATZY_CATEGORY_HELPERS: Record<YatzyCategory, string> = {
   'Two Pairs': 'Sum of two different pairs (4 dice). Example: 2-2-5-5-6 scores 2+2+5+5=14.',
   'Three of a Kind': 'Sum of three matching dice.',
   'Four of a Kind': 'Sum of four matching dice.',
-  'Small Straight': 'For dices in a row (e.g. 1-2-3-4). Score 30 points.',
-  'Large Straight': 'For dices in a row (e.g. 1-2-3-4-5). Scores 40 points.',
+  'Small Straight': 'Four dices in a row (e.g. 1-2-3-4). Score 30 points.',
+  'Large Straight': 'Five dices in a row (e.g. 1-2-3-4-5)). Scores 40 points.',
   'Full House': 'A pair and three of a kind (e.g., 2-2-3-3-3). Scores 25 points.',
   Chance: 'Sum of all dice (any combination).',
-  Yatzy: 'All five dice the same. Scores 35 points.',
+  Yatzy: 'All five dice the same. Scores 50points.',
 };

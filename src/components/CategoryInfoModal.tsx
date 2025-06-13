@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button } from '@chakra-ui/react';
+import { Trans } from 'react-i18next';
 
 interface CategoryInfoModalProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ export const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({ isOpen, on
       <ModalBody>
         {body}
         <Button mb={4} mt={4} colorScheme="blue" onClick={onClose} width="100%" data-testid="close-category-info-modal">
-          Close
+          <Trans>Close</Trans>
         </Button>
       </ModalBody>
     </ModalContent>

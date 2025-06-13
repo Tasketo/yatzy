@@ -5,11 +5,11 @@ const lowerCategories = [
   { name: 'Two Pairs', info: 'Sum of two different pairs (4 dice). Example: 2-2-5-5-6 scores 2+2+5+5=14.' },
   { name: 'Three of a Kind', info: 'Sum of three matching dice.' },
   { name: 'Four of a Kind', info: 'Sum of four matching dice.' },
-  { name: 'Small Straight', info: 'For dices in a row (e.g. 1-2-3-4). Score 30 points.' },
-  { name: 'Large Straight', info: 'For dices in a row (e.g. 1-2-3-4-5). Scores 40 points.' },
+  { name: 'Small Straight', info: 'Four dices in a row (e.g. 1-2-3-4). Score 30 points.' },
+  { name: 'Large Straight', info: 'Five dices in a row (e.g. 1-2-3-4-5)). Scores 40 points.' },
   { name: 'Full House', info: 'A pair and three of a kind (e.g., 2-2-3-3-3). Scores 25 points.' },
   { name: 'Chance', info: 'Sum of all dice (any combination).' },
-  { name: 'Yatzy', info: 'All five dice the same. Scores 35 points.' },
+  { name: 'Yatzy', info: 'All five dice the same. Scores 50points.' },
 ];
 
 test.describe('Yatzy category info alert', () => {
