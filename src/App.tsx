@@ -1,4 +1,5 @@
-import { Box, Button, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { useEffect, useRef } from 'react';
 import { PlayerForm } from './components/PlayerForm';
 import { ScoreSheet } from './components/ScoreSheet';
 import { Scoreboard } from './components/Scoreboard';
@@ -6,7 +7,7 @@ import { RoundNav } from './components/RoundNav';
 import { useYatzyGame } from './hooks/useYatzyGame';
 import { UPPER_CATEGORIES, LOWER_CATEGORIES } from './utils/yatzyCategories';
 import { getRandomColor } from './utils/getRandomColor';
-import { useEffect } from 'react';
+import { ResetConfirmationDialog } from './components/ResetConfirmationDialog';
 
 function App() {
   const {
@@ -49,6 +50,9 @@ function App() {
     }
     setPlayerColors({ ...playerColors, [player]: newColor });
   };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null!); // non-null assertion to satisfy type
 
   return (
     <Box className="app-container" position="relative">
@@ -149,14 +153,18 @@ function App() {
       )}
       {players && (
         <Box mt={10} textAlign="center">
-          <Button
-            colorScheme="red"
-            variant="outline"
-            data-testid={page === 'game' ? 'reset-btn' : 'reset-btn-scoreboard'}
-            onClick={handleReset}
-          >
+          <Button colorScheme="red" variant="outline" data-testid="reset-btn" onClick={onOpen}>
             Reset game
           </Button>
+          <ResetConfirmationDialog
+            isOpen={isOpen}
+            onClose={onClose}
+            onReset={() => {
+              onClose();
+              handleReset();
+            }}
+            cancelRef={cancelRef}
+          />
         </Box>
       )}
     </Box>

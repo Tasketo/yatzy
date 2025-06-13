@@ -154,6 +154,8 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('player-input-1').fill('Alice');
     await page.getByTestId('start-btn').click();
     await page.getByTestId('reset-btn').click();
+    await expect(page.getByTestId('ResetConfirmationDialog')).toBeVisible();
+    await page.getByTestId('confirm-reset-btn').click();
     await expect(page.getByTestId('player-form')).toBeVisible();
     // Should clear localStorage
     const state = await page.evaluate(() => localStorage.getItem('yatzy-state'));
@@ -168,6 +170,8 @@ test.describe('Yatzy App E2E', () => {
     await page.reload();
 
     await page.getByTestId('reset-btn').click();
+    await expect(page.getByTestId('ResetConfirmationDialog')).toBeVisible();
+    await page.getByTestId('confirm-reset-btn').click();
     await expect(page.getByTestId('player-form')).toBeVisible();
   });
 
@@ -181,7 +185,9 @@ test.describe('Yatzy App E2E', () => {
     }
     await page.getByTestId('finish-round-btn').click();
 
-    await page.getByTestId('reset-btn-scoreboard').click();
+    await page.getByTestId('reset-btn').click();
+    await expect(page.getByTestId('ResetConfirmationDialog')).toBeVisible();
+    await page.getByTestId('confirm-reset-btn').click();
     await expect(page.getByTestId('player-form')).toBeVisible();
   });
 });
