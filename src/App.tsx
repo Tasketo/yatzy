@@ -114,7 +114,7 @@ function App() {
               disabled={!allFieldsFilled}
               size="lg"
             >
-              Submit round & Show scoreboard
+              {currentRound === scoresPerRound.length - 1 ? 'Submit' : 'Show Scoreboard'}
             </Button>
           </Box>
         </>
@@ -152,7 +152,7 @@ function App() {
         </Box>
       )}
       {players && (
-        <Box mt={10} textAlign="center">
+        <Box mb={5} mt={5} textAlign="center">
           <Button colorScheme="red" variant="outline" data-testid="reset-btn" onClick={onOpen}>
             Reset game
           </Button>

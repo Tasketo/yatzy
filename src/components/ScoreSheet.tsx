@@ -1,6 +1,12 @@
 import React, { useRef, useEffect } from 'react';
-import { LOWER_CATEGORIES, UPPER_CATEGORIES, type YatzyCategory } from '../utils/yatzyCategories';
-import { Table, Thead, Tbody, Tr, Th, Td, Box, Input as ChakraInput, Checkbox } from '@chakra-ui/react';
+import {
+  LOWER_CATEGORIES,
+  UPPER_CATEGORIES,
+  type YatzyCategory,
+  YATZY_CATEGORY_HELPERS,
+} from '../utils/yatzyCategories';
+import { CategoryInfoModal } from './CategoryInfoModal';
+import { Table, Thead, Tbody, Tr, Th, Td, Box, Input as ChakraInput, Checkbox, useDisclosure } from '@chakra-ui/react';
 
 interface ScoreSheetProps {
   players: string[];
@@ -23,6 +29,10 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   useEffect(() => {
     prevScores.current = scores;
   }, [scores]);
+
+  // Modal state for category info
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalInfo, setModalInfo] = React.useState<{ title: string; body: string } | null>(null);
 
   return (
     <Box
@@ -147,41 +157,23 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
           </Tr>
           {/* Lower section */}
           {LOWER_CATEGORIES.map((category, idx) => {
-            let tooltip = '';
-            switch (category) {
-              case 'One Pair':
-                tooltip = 'Sum of the two highest matching dice.';
-                break;
-              case 'Two Pairs':
-                tooltip = 'Sum of two different pairs (4 dice). Example: 2-2-5-5-6 scores 2+2+5+5=14.';
-                break;
-              case 'Three of a Kind':
-                tooltip = 'Sum of three matching dice.';
-                break;
-              case 'Four of a Kind':
-                tooltip = 'Sum of four matching dice.';
-                break;
-              case 'Small Straight':
-                tooltip = 'For dices in a row (e.g. 1-2-3-4). Score 30 points.';
-                break;
-              case 'Large Straight':
-                tooltip = 'For dices in a row (e.g. 1-2-3-4-5). Scores 40 points.';
-                break;
-              case 'Full House':
-                tooltip = 'A pair and three of a kind (e.g., 2-2-3-3-3). Scores 25 points.';
-                break;
-              case 'Chance':
-                tooltip = 'Sum of all dice (any combination).';
-                break;
-              case 'Yatzy':
-                tooltip = 'All five dice the same. Scores 35 points.';
-                break;
-              default:
-                tooltip = '';
-            }
+            const tooltip = YATZY_CATEGORY_HELPERS[category] || '';
             return (
               <Tr key={category}>
-                <Td className="category-label" title={tooltip}>
+                <Td
+                  className="category-label"
+                  tabIndex={0}
+                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  onClick={() => {
+                    if (tooltip) {
+                      setModalInfo({ title: category, body: tooltip });
+                      onOpen();
+                    }
+                  }}
+                  aria-label={tooltip ? `Show info for ${category}` : undefined}
+                  data-testid={`category-info-${category}`}
+                  title={tooltip}
+                >
                   {category}
                 </Td>
                 {players.map((player) => {
@@ -243,6 +235,8 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
           </Tr>
         </Tbody>
       </Table>
+      {/* Modal for category info */}
+      <CategoryInfoModal isOpen={isOpen} onClose={onClose} title={modalInfo?.title} body={modalInfo?.body} />
     </Box>
   );
 };
