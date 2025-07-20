@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit && eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "playwright:install": "playwright install --with-deps",
+    "playwright:install": "playwright install --with-deps chromium",
     "lint:fix": "npm run lint --fix",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
