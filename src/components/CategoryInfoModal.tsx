@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, Button } from '@chakra-ui/react';
+import { Dialog, Button } from '@chakra-ui/react';
 import { Trans } from 'react-i18next';
 
 interface CategoryInfoModalProps {
@@ -10,17 +10,34 @@ interface CategoryInfoModalProps {
 }
 
 export const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({ isOpen, onClose, title, body }) => (
-  <Modal isOpen={isOpen} onClose={onClose} isCentered>
-    <ModalOverlay />
-    <ModalContent>
-      <ModalHeader>{title}</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody>
-        {body}
-        <Button mb={4} mt={4} colorScheme="blue" onClick={onClose} width="100%" data-testid="close-category-info-modal">
-          <Trans>Close</Trans>
-        </Button>
-      </ModalBody>
-    </ModalContent>
-  </Modal>
+  <Dialog.Root
+    open={isOpen}
+    onOpenChange={(open) => {
+      if (!open) onClose();
+    }}
+    placement="center"
+  >
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.CloseTrigger asChild>
+          <Button
+            position="absolute"
+            top={2}
+            right={2}
+            variant="ghost"
+            aria-label="Close"
+            data-testid="close-category-info-modal"
+            onClick={onClose}
+          >
+            <Trans>Close</Trans>
+          </Button>
+        </Dialog.CloseTrigger>
+        <Dialog.Header>
+          <Dialog.Title>{title}</Dialog.Title>
+        </Dialog.Header>
+        <Dialog.Body>{body}</Dialog.Body>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Dialog.Root>
 );

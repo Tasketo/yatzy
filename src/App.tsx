@@ -1,5 +1,5 @@
-import { Box, Button, Flex, useColorMode, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useRef } from 'react';
+import { Box, Button, Flex, useDisclosure } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { PlayerForm } from './components/PlayerForm';
 import { ScoreSheet } from './components/ScoreSheet';
 import { Scoreboard } from './components/Scoreboard';
@@ -10,6 +10,7 @@ import { getRandomColor } from './utils/getRandomColor';
 import { ResetConfirmationDialog } from './components/ResetConfirmationDialog';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useColorMode, useColorModeValue } from './components/ui/color-mode-hooks';
 
 function App() {
   const {
@@ -54,9 +55,7 @@ function App() {
     setPlayerColors({ ...playerColors, [player]: newColor });
   };
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<HTMLButtonElement>(null!); // non-null assertion to satisfy type
-
+  const { open, onOpen, onClose } = useDisclosure();
   return (
     <Box position="relative" mt={2}>
       <Flex justifyContent="end">
@@ -161,13 +160,12 @@ function App() {
             Reset game
           </Button>
           <ResetConfirmationDialog
-            isOpen={isOpen}
+            isOpen={open}
             onClose={onClose}
             onReset={() => {
               onClose();
               handleReset();
             }}
-            cancelRef={cancelRef}
           />
         </Box>
       )}

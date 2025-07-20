@@ -1,6 +1,6 @@
 import React from 'react';
 import { getRoundWinners } from '../utils/getRoundWinners';
-import { Table, Thead, Tbody, Tr, Th, Td, Box, Text } from '@chakra-ui/react';
+import { Table, Box, Text } from '@chakra-ui/react';
 import { Trans } from 'react-i18next';
 
 interface ScoreboardProps {
@@ -34,25 +34,25 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
       <Text as="h2" fontSize="xl" fontWeight="bold" mb={4} color="gray.800" _dark={{ color: 'gray.100' }}>
         <Trans>Scoreboard</Trans>
       </Text>
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>
+      <Table.Root variant="outline" size="sm">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>
               <Trans>Round</Trans>
-            </Th>
+            </Table.ColumnHeader>
             {players.map((player) => (
-              <Th key={player} color={playerColors[player]}>
+              <Table.ColumnHeader key={player} color={playerColors[player]}>
                 {player}
-              </Th>
+              </Table.ColumnHeader>
             ))}
-          </Tr>
-        </Thead>
-        <Tbody>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {rounds.map((round, idx) => (
-            <Tr key={idx} data-testid={`scoreboard-row-${idx}`}>
-              <Td>{idx + 1}</Td>
+            <Table.Row key={idx} data-testid={`scoreboard-row-${idx}`}>
+              <Table.Cell>{idx + 1}</Table.Cell>
               {players.map((player) => (
-                <Td key={player} fontWeight={roundWinners[idx].includes(player) ? 700 : undefined}>
+                <Table.Cell key={player} fontWeight={roundWinners[idx].includes(player) ? 700 : undefined}>
                   {round[player] ?? '-'}
                   {roundWinners[idx].includes(player) ? (
                     <span role="img" aria-label="Winner" className="trophy-animate">
@@ -61,14 +61,14 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
                   ) : (
                     ''
                   )}
-                </Td>
+                </Table.Cell>
               ))}
-            </Tr>
+            </Table.Row>
           ))}
-          <Tr data-testid="scoreboard-total-row">
-            <Td>Total</Td>
+          <Table.Row data-testid="scoreboard-total-row">
+            <Table.Cell>Total</Table.Cell>
             {players.map((player) => (
-              <Td key={player} fontWeight={700}>
+              <Table.Cell key={player} fontWeight={700}>
                 {totals[player]}
                 {overallWinners.includes(player) ? (
                   <span role="img" aria-label="Winner">
@@ -77,11 +77,11 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
                 ) : (
                   ''
                 )}
-              </Td>
+              </Table.Cell>
             ))}
-          </Tr>
-        </Tbody>
-      </Table>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
       {overallWinners.length === 1 ? (
         <Text mt={4} fontWeight={700} color={playerColors[overallWinners[0]]} data-testid="overall-winner">
           Winner: {overallWinners[0]}
