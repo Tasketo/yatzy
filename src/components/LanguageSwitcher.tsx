@@ -8,11 +8,11 @@ export const LanguageSwitcher: React.FC = () => {
     i18n.changeLanguage(lng);
   };
   return (
-    <HStack spacing={2} mb={4} justifyContent="flex-end">
-      <Button size="sm" onClick={() => changeLanguage('en')} isActive={i18n.language === 'en'}>
+    <HStack mb={4} justifyContent="flex-end">
+      <Button size="sm" onClick={() => changeLanguage('en')} variant={i18n.language === 'en' ? 'solid' : 'outline'}>
         EN
       </Button>
-      <Button size="sm" onClick={() => changeLanguage('de')} isActive={i18n.language === 'de'}>
+      <Button size="sm" onClick={() => changeLanguage('de')} variant={i18n.language === 'de' ? 'solid' : 'outline'}>
         DE
       </Button>
     </HStack>
