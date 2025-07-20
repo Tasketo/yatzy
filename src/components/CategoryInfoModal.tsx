@@ -21,22 +21,19 @@ export const CategoryInfoModal: React.FC<CategoryInfoModalProps> = ({ isOpen, on
     <Dialog.Positioner>
       <Dialog.Content>
         <Dialog.CloseTrigger asChild>
-          <Button
-            position="absolute"
-            top={2}
-            right={2}
-            variant="ghost"
-            aria-label="Close"
-            data-testid="close-category-info-modal"
-            onClick={onClose}
-          >
-            <Trans>Close</Trans>
+          <Button position="absolute" top={2} right={2} variant="ghost" aria-label="Close" onClick={onClose}>
+            X
           </Button>
         </Dialog.CloseTrigger>
         <Dialog.Header>
           <Dialog.Title>{title}</Dialog.Title>
         </Dialog.Header>
         <Dialog.Body>{body}</Dialog.Body>
+        <Dialog.Footer>
+          <Button variant="subtle" onClick={onClose} data-testid="close-category-info-modal">
+            <Trans>Close</Trans>
+          </Button>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Positioner>
   </Dialog.Root>
