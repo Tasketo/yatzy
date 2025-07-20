@@ -65,7 +65,7 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
           {error}
         </Text>
       )}
-      <VStack spacing={3} align="stretch">
+      <VStack align="stretch">
         {names.map((name, idx) => (
           <HStack key={idx}>
             <Input
@@ -94,7 +94,7 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
         <Button type="button" colorScheme="teal" onClick={addPlayer} mb={2} data-testid="add-player-btn">
           {t('Add Player')}
         </Button>
-        <Button type="submit" colorScheme="blue" w="full" data-testid="start-btn">
+        <Button type="submit" colorScheme="blue" data-testid="start-btn">
           {t('Start Game')}
         </Button>
       </VStack>
