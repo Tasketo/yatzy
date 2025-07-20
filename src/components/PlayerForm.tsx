@@ -65,7 +65,7 @@ export const PlayerForm: React.FC<PlayerFormProps> = ({ onSubmit }) => {
           {error}
         </Text>
       )}
-      <VStack spaceX={3} spaceY={3} align="stretch">
+      <VStack align="stretch">
         {names.map((name, idx) => (
           <HStack key={idx}>
             <Input
