@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Yatzy App E2E', () => {
   test('shows eyecatcher and player form on load', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.yatzy-eyecatcher')).toBeVisible();
+    await expect(page.getByTestId('eyecatcher')).toBeVisible();
     await expect(page.getByTestId('theme-toggle-btn')).toBeVisible();
     await expect(page.getByTestId('player-form')).toBeVisible();
   });
