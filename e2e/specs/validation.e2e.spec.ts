@@ -17,6 +17,26 @@ test.describe('Validation', () => {
     await expect(page.locator('text=Must be divisible by 2')).toHaveCount(0);
   });
 
+  test('upper categories: enforces maximum based on 5 dice', async ({ page }) => {
+    await page.goto('/');
+    await page.fill('[data-testid="player-input-1"]', 'Alice');
+    await page.click('[data-testid="start-btn"]');
+
+    // Ones (row 1): max is 5 (5 dice × 1)
+    const onesSelector = '[data-testid="score-input-row-1-Alice"]';
+    await page.fill(onesSelector, '10');
+    await expect(page.locator('text=Maximum is 5')).toBeVisible();
+    await page.fill(onesSelector, '5');
+    await expect(page.locator('text=Maximum is 5')).toHaveCount(0);
+
+    // Sixes (row 6): max is 30 (5 dice × 6)
+    const sixesSelector = '[data-testid="score-input-row-6-Alice"]';
+    await page.fill(sixesSelector, '36');
+    await expect(page.locator('text=Maximum is 30')).toBeVisible();
+    await page.fill(sixesSelector, '30');
+    await expect(page.locator('text=Maximum is 30')).toHaveCount(0);
+  });
+
   test('lower fixed-score categories: require exact value', async ({ page }) => {
     await page.goto('/');
     await page.fill('[data-testid="player-input-1"]', 'Alice');
@@ -73,5 +93,46 @@ test.describe('Validation', () => {
     await page.fill('[data-testid="score-input-row-15-Alice"]', '0'); // Yatzy
     // Finish button should be enabled (no errors)
     await expect(page.locator('[data-testid="finish-round-btn"]')).toBeEnabled();
+  });
+
+  test('lower non-fixed categories: enforces maximum values', async ({ page }) => {
+    await page.goto('/');
+    await page.fill('[data-testid="player-input-1"]', 'Alice');
+    await page.click('[data-testid="start-btn"]');
+
+    // One Pair (row 7): max is 12
+    const onePairSelector = '[data-testid="score-input-row-7-Alice"]';
+    await page.fill(onePairSelector, '13');
+    await expect(page.locator('text=Maximum is 12')).toBeVisible();
+    await page.fill(onePairSelector, '12');
+    await expect(page.locator('text=Maximum is 12')).toHaveCount(0);
+
+    // Two Pairs (row 8): max is 22
+    const twoPairsSelector = '[data-testid="score-input-row-8-Alice"]';
+    await page.fill(twoPairsSelector, '23');
+    await expect(page.locator('text=Maximum is 22')).toBeVisible();
+    await page.fill(twoPairsSelector, '22');
+    await expect(page.locator('text=Maximum is 22')).toHaveCount(0);
+
+    // Three of a Kind (row 9): max is 18
+    const threeOfAKindSelector = '[data-testid="score-input-row-9-Alice"]';
+    await page.fill(threeOfAKindSelector, '19');
+    await expect(page.locator('text=Maximum is 18')).toBeVisible();
+    await page.fill(threeOfAKindSelector, '18');
+    await expect(page.locator('text=Maximum is 18')).toHaveCount(0);
+
+    // Four of a Kind (row 10): max is 24
+    const fourOfAKindSelector = '[data-testid="score-input-row-10-Alice"]';
+    await page.fill(fourOfAKindSelector, '25');
+    await expect(page.locator('text=Maximum is 24')).toBeVisible();
+    await page.fill(fourOfAKindSelector, '24');
+    await expect(page.locator('text=Maximum is 24')).toHaveCount(0);
+
+    // Chance (row 14): max is 30
+    const chanceSelector = '[data-testid="score-input-row-14-Alice"]';
+    await page.fill(chanceSelector, '31');
+    await expect(page.locator('text=Maximum is 30')).toBeVisible();
+    await page.fill(chanceSelector, '30');
+    await expect(page.locator('text=Maximum is 30')).toHaveCount(0);
   });
 });

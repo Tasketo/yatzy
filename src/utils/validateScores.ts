@@ -7,6 +7,14 @@ const FIXED_SCORES: Record<string, number> = {
   Yatzy: 50,
 };
 
+const LOWER_CATEGORY_MAXES: Record<string, number> = {
+  'One Pair': 12, // 6 + 6
+  'Two Pairs': 22, // 6 + 6 + 5 + 5
+  'Three of a Kind': 18, // 6 + 6 + 6
+  'Four of a Kind': 24, // 6 + 6 + 6 + 6
+  Chance: 30, // 6 + 6 + 6 + 6 + 6
+};
+
 function parseInteger(value: string): number | null {
   if (value === undefined || value === null) return null;
   const v = value.toString().trim();
@@ -25,15 +33,28 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   if (n === null) return { valid: false, reason: 'Required' };
   if (Number.isNaN(n)) return { valid: false, reason: 'Must be an integer' };
   if (n < 0) return { valid: false, reason: 'Must be non-negative' };
-  if (n > 999) return { valid: false, reason: 'Too large' };
 
   // Upper categories: value must be divisible by the face (Ones=1, Twos=2...)
+  // With 5 dice, max is 5 * face value (e.g., Sixes max is 30)
   // Note: 0 is valid for all upper categories (0 % any number === 0)
   const upperIndex = UPPER_CATEGORIES.indexOf(category);
   if (upperIndex !== -1) {
     const face = upperIndex + 1;
+    const maxForCategory = 5 * face; // 5 dice max
+    if (n > maxForCategory) {
+      return { valid: false, reason: `Maximum is ${maxForCategory}` };
+    }
     if (n % face !== 0) {
       return { valid: false, reason: `Must be divisible by ${face}` };
+    }
+    return { valid: true };
+  }
+
+  // Check lower category maximums first
+  if (Object.prototype.hasOwnProperty.call(LOWER_CATEGORY_MAXES, category)) {
+    const max = LOWER_CATEGORY_MAXES[category];
+    if (n > max) {
+      return { valid: false, reason: `Maximum is ${max}` };
     }
   }
 

@@ -105,7 +105,7 @@ test.describe('Yatzy App E2E', () => {
 
     // Fill round 2 with other valid values
     const aliceRound2 = ['3', '6', '9', '12', '15', '18', '6', '12', '18', '24', '30', '40', '25', '30', '50'];
-    const bobRound2 = ['4', '8', '12', '16', '20', '24', '8', '16', '24', '32', '30', '40', '25', '40', '50'];
+    const bobRound2 = ['4', '8', '12', '16', '20', '24', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
     for (let i = 0; i < 15; i++) {
       await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound2[i]);
       await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound2[i]);
@@ -123,7 +123,7 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('player-input-2').fill('Bob');
     await page.getByTestId('start-btn').click();
     // Round 1: Alice wins (valid values)
-    const aliceRound1 = ['6', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
+    const aliceRound1 = ['5', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
     const bobRound1 = ['1', '2', '3', '4', '5', '6', '2', '4', '6', '8', '30', '40', '25', '10', '50'];
     for (let i = 0; i < 15; i++) {
       await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound1[i]);
@@ -136,7 +136,7 @@ test.describe('Yatzy App E2E', () => {
     await expect(page.getByTestId('score-sheet')).toBeVisible();
     // Round 2: Bob wins (valid values)
     const aliceRound2 = ['1', '2', '3', '4', '5', '6', '2', '4', '6', '8', '30', '40', '25', '10', '50'];
-    const bobRound2 = ['6', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
+    const bobRound2 = ['5', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
     for (let i = 0; i < 15; i++) {
       await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound2[i]);
       await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound2[i]);
