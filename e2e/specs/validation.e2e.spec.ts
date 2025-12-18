@@ -67,10 +67,10 @@ test.describe('Validation', () => {
     await page.fill('[data-testid="score-input-row-10-Alice"]', '0'); // Four of a Kind
     await page.fill('[data-testid="score-input-row-14-Alice"]', '0'); // Chance
     // Fill fixed categories with exact values
-    await page.fill('[data-testid="score-input-row-11-Alice"]', '30'); // Small Straight
-    await page.fill('[data-testid="score-input-row-12-Alice"]', '40'); // Large Straight
-    await page.fill('[data-testid="score-input-row-13-Alice"]', '25'); // Full House
-    await page.fill('[data-testid="score-input-row-15-Alice"]', '50'); // Yatzy
+    await page.fill('[data-testid="score-input-row-11-Alice"]', '0'); // Small Straight
+    await page.fill('[data-testid="score-input-row-12-Alice"]', '0'); // Large Straight
+    await page.fill('[data-testid="score-input-row-13-Alice"]', '0'); // Full House
+    await page.fill('[data-testid="score-input-row-15-Alice"]', '0'); // Yatzy
     // Finish button should be enabled (no errors)
     await expect(page.locator('[data-testid="finish-round-btn"]')).toBeEnabled();
   });

@@ -38,10 +38,10 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   }
 
   // Fixed-score lower categories
-  // Note: 0 is NOT valid for fixed categories (must match exact fixed value)
+  // Note: 0 is valid (represents "no score in this category"); otherwise must match exact fixed value
   if (Object.prototype.hasOwnProperty.call(FIXED_SCORES, category)) {
     const fixed = FIXED_SCORES[category];
-    if (n !== fixed) return { valid: false, reason: `Must be exactly ${fixed}` };
+    if (n !== 0 && n !== fixed) return { valid: false, reason: `Must be exactly ${fixed}` };
   }
 
   return { valid: true };
