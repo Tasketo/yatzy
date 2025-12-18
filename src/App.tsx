@@ -19,7 +19,9 @@ function App() {
     currentRound,
     playerColors,
     page,
-    allFieldsFilled,
+    // allFieldsFilled (deprecated) is no longer used; validation is via allFieldsValid
+    validationErrors,
+    allFieldsValid,
     handlePlayersSubmit,
     handleScoreChange,
     handleFinishRound,
@@ -108,13 +110,14 @@ function App() {
             onScoreChange={handleScoreChange}
             playerColors={playerColors}
             onPlayerColorChange={handlePlayerColorChange}
+            validationErrors={validationErrors}
           />
           <Box mt={6} textAlign="center">
             <Button
               onClick={handleFinishRound}
               data-testid="finish-round-btn"
               colorScheme="purple"
-              disabled={!allFieldsFilled}
+              disabled={!allFieldsValid}
               size="lg"
             >
               {currentRound === scoresPerRound.length - 1 ? t('Submit') : t('Show Scoreboard')}

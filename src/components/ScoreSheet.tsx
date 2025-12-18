@@ -15,6 +15,7 @@ interface ScoreSheetProps {
   onScoreChange: (player: string, category: YatzyCategory, value: string) => void;
   playerColors: Record<string, string>;
   onPlayerColorChange?: (player: string) => void;
+  validationErrors?: Record<string, Record<YatzyCategory, string | null>>;
 }
 
 export const ScoreSheet: React.FC<ScoreSheetProps> = ({
@@ -23,6 +24,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   onScoreChange,
   playerColors,
   onPlayerColorChange,
+  validationErrors,
 }) => {
   const { t } = useTranslation();
   // Track previous values for animation
@@ -99,6 +101,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 </Table.Cell>
                 {players.map((player) => {
                   const curr = scores[player]?.[category];
+                  const err = validationErrors?.[player]?.[category] ?? null;
                   return (
                     <Table.Cell key={player} color={playerColors[player]}>
                       <ChakraInput
@@ -111,8 +114,21 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                         inputMode="numeric"
                         color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1}-${player}`}
+                        aria-invalid={!!err}
+                        aria-describedby={err ? `err-${player}-${category.replace(/\s+/g, '-')}` : undefined}
                         size="sm"
                       />
+                      {err ? (
+                        <Box
+                          id={`err-${player}-${category.replace(/\s+/g, '-')}`}
+                          mt={1}
+                          color="red.500"
+                          fontSize="xs"
+                          role="alert"
+                        >
+                          {err}
+                        </Box>
+                      ) : null}
                     </Table.Cell>
                   );
                 })}
@@ -194,6 +210,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 </Table.Cell>
                 {players.map((player) => {
                   const curr = scores[player]?.[category as YatzyCategory];
+                  const err = validationErrors?.[player]?.[category as YatzyCategory] ?? null;
                   return (
                     <Table.Cell key={player} color={playerColors[player]}>
                       <ChakraInput
@@ -206,8 +223,23 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                         inputMode="numeric"
                         color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1 + UPPER_CATEGORIES.length}-${player}`}
+                        aria-invalid={!!err}
+                        aria-describedby={
+                          err ? `err-${player}-${(category as string).replace(/\s+/g, '-')}` : undefined
+                        }
                         size="sm"
                       />
+                      {err ? (
+                        <Box
+                          id={`err-${player}-${(category as string).replace(/\s+/g, '-')}`}
+                          mt={1}
+                          color="red.500"
+                          fontSize="xs"
+                          role="alert"
+                        >
+                          {err}
+                        </Box>
+                      ) : null}
                     </Table.Cell>
                   );
                 })}

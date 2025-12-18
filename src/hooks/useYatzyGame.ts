@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LOWER_CATEGORIES, UPPER_CATEGORIES, type YatzyCategory } from '../utils/yatzyCategories';
+import { validateRoundScores } from '../utils/validateScores';
 import { getRandomColor } from '../utils/getRandomColor';
 
 // --- Types for improved type safety ---
@@ -24,11 +25,14 @@ export function useYatzyGame() {
       try {
         const { players, scoresPerRound, playerColors, currentRound, page } = JSON.parse(saved);
         if (players && scoresPerRound && playerColors) {
-          setPlayers(players);
-          setScoresPerRound(scoresPerRound);
-          setPlayerColors(playerColors);
-          setCurrentRound(currentRound || 0);
-          setPage(page || 'game');
+          // avoid synchronous setState calls within effect
+          setTimeout(() => {
+            setPlayers(players);
+            setScoresPerRound(scoresPerRound);
+            setPlayerColors(playerColors);
+            setCurrentRound(currentRound || 0);
+            setPage(page || 'game');
+          }, 0);
         }
       } catch {
         // Ignore JSON parse errors and fallback to initial state
@@ -101,9 +105,23 @@ export function useYatzyGame() {
       ),
     );
 
+  const validationErrors = useMemo(() => {
+    if (!players || !scoresPerRound[currentRound]) return {} as Record<string, Record<YatzyCategory, string | null>>;
+    const out: Record<string, Record<YatzyCategory, string | null>> = {};
+    players.forEach((p) => {
+      const playerScores = scoresPerRound[currentRound][p] || ({} as Record<YatzyCategory, string>);
+      out[p] = validateRoundScores(playerScores);
+    });
+    return out;
+  }, [players, scoresPerRound, currentRound]);
+
+  const allFieldsValid =
+    !!players && players.every((p) => Object.values(validationErrors[p] || {}).every((v) => v === null));
+
   const handleFinishRound = useCallback(() => {
+    if (!allFieldsValid) return;
     setPage('scoreboard');
-  }, []);
+  }, [allFieldsValid]);
 
   const handlePlayNewRound = useCallback(() => {
     if (!players) return;
@@ -140,6 +158,8 @@ export function useYatzyGame() {
     playerColors,
     page,
     allFieldsFilled,
+    validationErrors,
+    allFieldsValid,
     handlePlayersSubmit,
     handleScoreChange,
     handleFinishRound,
