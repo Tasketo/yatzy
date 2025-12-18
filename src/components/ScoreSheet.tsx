@@ -1,13 +1,12 @@
-import React, { useRef, useEffect } from 'react';
-import {
-  LOWER_CATEGORIES,
-  UPPER_CATEGORIES,
-  type YatzyCategory,
-  YATZY_CATEGORY_HELPERS,
-} from '../utils/yatzyCategories';
+import React from 'react';
+import { type YatzyCategory } from '../utils/yatzyCategories';
 import { CategoryInfoModal } from './CategoryInfoModal';
-import { Table, Box, Input as ChakraInput, Checkbox, useDisclosure } from '@chakra-ui/react';
-import { useTranslation, Trans } from 'react-i18next';
+import { Table, Box, useDisclosure } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { UpperSection } from './UpperSection';
+import { SumAndBonusRow } from './SumAndBonusRow';
+import { LowerSection } from './LowerSection';
+import { TotalRow } from './TotalRow';
 
 interface ScoreSheetProps {
   players: string[];
@@ -29,25 +28,15 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   submitAttempted,
 }) => {
   const { t } = useTranslation();
-  // Track previous values for animation
-  const prevScores = useRef<Record<string, Record<YatzyCategory, string>>>({});
-
-  useEffect(() => {
-    prevScores.current = scores;
-  }, [scores]);
-
-  // Determine if error should be shown: only show "Required" errors on submit attempt
-  const shouldShowError = (err: string | null, fieldValue: string) => {
-    if (!err) return false;
-    // Always show non-"Required" errors
-    if (err !== 'Required') return true;
-    // Show "Required" only if submit was attempted or field is non-empty
-    return submitAttempted || fieldValue.trim() !== '';
-  };
 
   // Modal state for category info
   const { open, onOpen, onClose } = useDisclosure();
   const [modalInfo, setModalInfo] = React.useState<{ title: string; body: string } | null>(null);
+
+  const handleCategoryInfoClick = (title: string, body: string) => {
+    setModalInfo({ title, body });
+    onOpen();
+  };
 
   return (
     <Box
@@ -61,9 +50,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
       <Table.Root size="sm" variant="line">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader>
-              <Trans>Name</Trans>:
-            </Table.ColumnHeader>
+            <Table.ColumnHeader>{t('Name')}:</Table.ColumnHeader>
             {players.map((player) => (
               <Table.ColumnHeader
                 key={player}
@@ -90,210 +77,26 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {/* Upper section */}
-          {UPPER_CATEGORIES.map((category, idx) => {
-            const tooltip = YATZY_CATEGORY_HELPERS[category] || '';
-            return (
-              <Table.Row key={category}>
-                <Table.Cell
-                  tabIndex={0}
-                  border={0}
-                  cursor="pointer"
-                  onClick={() => {
-                    if (tooltip) {
-                      setModalInfo({ title: t(category), body: t(tooltip) });
-                      onOpen();
-                    }
-                  }}
-                  aria-label={tooltip ? `Show info for ${category}` : undefined}
-                  data-testid={`category-info-${category}`}
-                  title={tooltip}
-                >
-                  <Trans>{category}</Trans>
-                </Table.Cell>
-                {players.map((player) => {
-                  const curr = scores[player]?.[category];
-                  const err = validationErrors?.[player]?.[category] ?? null;
-                  const showErr = shouldShowError(err, curr || '');
-                  return (
-                    <Table.Cell key={player} color={playerColors[player]} border={0}>
-                      <ChakraInput
-                        type="number"
-                        textAlign="center"
-                        min={0}
-                        max={999}
-                        value={curr ?? ''}
-                        onChange={(e) => onScoreChange(player, category, e.target.value)}
-                        inputMode="numeric"
-                        color={playerColors[player]}
-                        data-testid={`score-input-row-${idx + 1}-${player}`}
-                        aria-invalid={showErr}
-                        aria-describedby={showErr ? `err-${player}-${category.replace(/\s+/g, '-')}` : undefined}
-                        size="sm"
-                      />
-                      {showErr ? (
-                        <Box
-                          id={`err-${player}-${category.replace(/\s+/g, '-')}`}
-                          mt={1}
-                          color="red.500"
-                          fontSize="xs"
-                          role="alert"
-                        >
-                          {err}
-                        </Box>
-                      ) : null}
-                    </Table.Cell>
-                  );
-                })}
-              </Table.Row>
-            );
-          })}
-          {/* Sum row */}
-          <Table.Row>
-            <Table.Cell fontWeight="bold">
-              <Trans>Sum</Trans>
-            </Table.Cell>
-            {players.map((player) => {
-              const sum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
-                (a, b) => a + b,
-                0,
-              );
-              return (
-                <Table.Cell
-                  textAlign="center"
-                  key={player}
-                  color={playerColors[player]}
-                  data-testid={`sum-cell-${player}`}
-                  fontWeight={700}
-                >
-                  {sum}
-                </Table.Cell>
-              );
-            })}
-          </Table.Row>
-          {/* Bonus row */}
-          <Table.Row>
-            <Table.Cell fontStyle="italic" border={0}>
-              <Trans>Bonus</Trans>
-            </Table.Cell>
-            {players.map((player) => {
-              const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
-                (a, b) => a + b,
-                0,
-              );
-              const hasBonus = upperSum > 62;
-              return (
-                <Table.Cell key={player} textAlign="center" border={0}>
-                  <Checkbox.Root
-                    checked={hasBonus}
-                    readOnly
-                    colorScheme="green"
-                    aria-label={hasBonus ? 'Bonus reached' : 'No bonus'}
-                    data-testid={`bonus-checkbox-${player}`}
-                  >
-                    <Checkbox.HiddenInput />
-                    <Checkbox.Control color={playerColors[player]} />
-                  </Checkbox.Root>
-                </Table.Cell>
-              );
-            })}
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell colSpan={players.length + 1} border={0}></Table.Cell>
-          </Table.Row>
-          {/* Lower section */}
-          {LOWER_CATEGORIES.map((category, idx) => {
-            const tooltip = YATZY_CATEGORY_HELPERS[category] || '';
-            return (
-              <Table.Row key={category}>
-                <Table.Cell
-                  tabIndex={0}
-                  cursor="pointer"
-                  border={0}
-                  onClick={() => {
-                    if (tooltip) {
-                      setModalInfo({ title: t(category), body: t(tooltip) });
-                      onOpen();
-                    }
-                  }}
-                  aria-label={tooltip ? `Show info for ${category}` : undefined}
-                  data-testid={`category-info-${category}`}
-                  title={tooltip}
-                >
-                  <Trans>{category}</Trans>
-                </Table.Cell>
-                {players.map((player) => {
-                  const curr = scores[player]?.[category as YatzyCategory];
-                  const err = validationErrors?.[player]?.[category as YatzyCategory] ?? null;
-                  const showErr = shouldShowError(err, curr || '');
-                  return (
-                    <Table.Cell key={player} color={playerColors[player]} border={0}>
-                      <ChakraInput
-                        type="number"
-                        textAlign="center"
-                        min={0}
-                        max={50}
-                        value={curr ?? ''}
-                        onChange={(e) => onScoreChange(player, category as YatzyCategory, e.target.value)}
-                        inputMode="numeric"
-                        color={playerColors[player]}
-                        data-testid={`score-input-row-${idx + 1 + UPPER_CATEGORIES.length}-${player}`}
-                        aria-invalid={showErr}
-                        aria-describedby={
-                          showErr ? `err-${player}-${(category as string).replace(/\s+/g, '-')}` : undefined
-                        }
-                        size="sm"
-                      />
-                      {showErr ? (
-                        <Box
-                          id={`err-${player}-${(category as string).replace(/\s+/g, '-')}`}
-                          mt={1}
-                          color="red.500"
-                          fontSize="xs"
-                          role="alert"
-                        >
-                          {err}
-                        </Box>
-                      ) : null}
-                    </Table.Cell>
-                  );
-                })}
-              </Table.Row>
-            );
-          })}
-          {/* Total row */}
-          <Table.Row>
-            <Table.Cell fontWeight="bold">
-              <Trans>Total</Trans>
-            </Table.Cell>
-            {players.map((player) => {
-              // Upper section sum
-              const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
-                (a, b) => a + b,
-                0,
-              );
-              // Bonus
-              const bonus = upperSum > 62 ? 35 : 0;
-              // Lower section sum
-              const lowerSum = LOWER_CATEGORIES.map((cat) => parseInt(scores[player]?.[cat] || '0', 10)).reduce(
-                (a, b) => a + b,
-                0,
-              );
-              // Total
-              const total = upperSum + bonus + lowerSum;
-              return (
-                <Table.Cell
-                  textAlign="center"
-                  key={player}
-                  color={playerColors[player]}
-                  data-testid={`endsum-cell-${player}`}
-                  fontWeight={700}
-                >
-                  {total}
-                </Table.Cell>
-              );
-            })}
-          </Table.Row>
+          <UpperSection
+            players={players}
+            scores={scores}
+            onScoreChange={onScoreChange}
+            playerColors={playerColors}
+            validationErrors={validationErrors}
+            submitAttempted={submitAttempted}
+            onCategoryInfoClick={handleCategoryInfoClick}
+          />
+          <SumAndBonusRow players={players} scores={scores} playerColors={playerColors} />
+          <LowerSection
+            players={players}
+            scores={scores}
+            onScoreChange={onScoreChange}
+            playerColors={playerColors}
+            validationErrors={validationErrors}
+            submitAttempted={submitAttempted}
+            onCategoryInfoClick={handleCategoryInfoClick}
+          />
+          <TotalRow players={players} scores={scores} playerColors={playerColors} />
         </Table.Body>
       </Table.Root>
       {/* Modal for category info */}
