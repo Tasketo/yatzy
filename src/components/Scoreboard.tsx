@@ -34,7 +34,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
       <Text as="h2" fontSize="xl" fontWeight="bold" mb={4} color="gray.800" _dark={{ color: 'gray.100' }}>
         <Trans>Scoreboard</Trans>
       </Text>
-      <Table.Root variant="outline" size="sm">
+      <Table.Root size="sm">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>

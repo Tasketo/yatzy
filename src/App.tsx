@@ -84,7 +84,7 @@ function App() {
         fontFamily="'Montserrat', 'Segoe UI', Arial, sans-serif"
         fontSize={{ base: '2xl', md: '2.5rem' }}
         fontWeight={900}
-        letterSpacing="0.08em"
+        letterSpacing="0.1em"
         mb={4}
         py={3}
         px={6}
@@ -92,8 +92,6 @@ function App() {
         textShadow="0 2px 8px rgba(0,0,0,0.1)"
         transition="transform 0.2s"
         userSelect="none"
-        _hover={{ boxShadow: '0 8px 32px 0 rgba(244, 67, 54, 0.18)', transform: 'scale(1.04) rotate(-2deg)' }}
-        className="yatzy-eyecatcher"
         data-testid="eyecatcher"
       >
         Yatzy

@@ -54,11 +54,11 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
       data-testid="score-sheet"
       borderRadius="lg"
       boxShadow="md"
-      p={4}
+      p={1}
       bg="whiteAlpha.900"
-      _dark={{ bg: 'gray.700' }}
+      _dark={{ bg: 'gray.900' }}
     >
-      <Table.Root size="sm">
+      <Table.Root size="sm" variant="line">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>
@@ -97,7 +97,8 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
               <Table.Row key={category}>
                 <Table.Cell
                   tabIndex={0}
-                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  border={0}
+                  cursor="pointer"
                   onClick={() => {
                     if (tooltip) {
                       setModalInfo({ title: t(category), body: t(tooltip) });
@@ -115,7 +116,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                   const err = validationErrors?.[player]?.[category] ?? null;
                   const showErr = shouldShowError(err, curr || '');
                   return (
-                    <Table.Cell key={player} color={playerColors[player]}>
+                    <Table.Cell key={player} color={playerColors[player]} border={0}>
                       <ChakraInput
                         type="number"
                         textAlign="center"
@@ -172,7 +173,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
           </Table.Row>
           {/* Bonus row */}
           <Table.Row>
-            <Table.Cell fontStyle="italic">
+            <Table.Cell fontStyle="italic" border={0}>
               <Trans>Bonus</Trans>
             </Table.Cell>
             {players.map((player) => {
@@ -182,7 +183,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
               );
               const hasBonus = upperSum > 62;
               return (
-                <Table.Cell key={player} textAlign="center">
+                <Table.Cell key={player} textAlign="center" border={0}>
                   <Checkbox.Root
                     checked={hasBonus}
                     readOnly
@@ -198,7 +199,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
             })}
           </Table.Row>
           <Table.Row>
-            <Table.Cell colSpan={players.length + 1}></Table.Cell>
+            <Table.Cell colSpan={players.length + 1} border={0}></Table.Cell>
           </Table.Row>
           {/* Lower section */}
           {LOWER_CATEGORIES.map((category, idx) => {
@@ -207,7 +208,8 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
               <Table.Row key={category}>
                 <Table.Cell
                   tabIndex={0}
-                  style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                  cursor="pointer"
+                  border={0}
                   onClick={() => {
                     if (tooltip) {
                       setModalInfo({ title: t(category), body: t(tooltip) });
@@ -225,12 +227,12 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                   const err = validationErrors?.[player]?.[category as YatzyCategory] ?? null;
                   const showErr = shouldShowError(err, curr || '');
                   return (
-                    <Table.Cell key={player} color={playerColors[player]}>
+                    <Table.Cell key={player} color={playerColors[player]} border={0}>
                       <ChakraInput
                         type="number"
                         textAlign="center"
                         min={0}
-                        max={999}
+                        max={50}
                         value={curr ?? ''}
                         onChange={(e) => onScoreChange(player, category as YatzyCategory, e.target.value)}
                         inputMode="numeric"
