@@ -5,8 +5,8 @@ import { ScoreSheet } from './components/ScoreSheet';
 import { Scoreboard } from './components/Scoreboard';
 import { RoundNav } from './components/RoundNav';
 import { useYatzyGame } from './hooks/useYatzyGame';
-import { UPPER_CATEGORIES, LOWER_CATEGORIES } from './utils/yatzyCategories';
 import { getRandomColor } from './utils/getRandomColor';
+import { calculateRoundTotal } from './utils/calculateScores';
 import { ResetConfirmationDialog } from './components/ResetConfirmationDialog';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,6 @@ function App() {
     currentRound,
     playerColors,
     page,
-    // allFieldsFilled (deprecated) is no longer used; validation is via allFieldsValid
     validationErrors,
     allFieldsValid,
     submitAttempted,
@@ -135,16 +134,8 @@ function App() {
               // Calculate total for each player for this round
               const totals: Record<string, number> = {};
               players.forEach((player) => {
-                const upperSum = UPPER_CATEGORIES.map((cat) => parseInt(round[player]?.[cat] || '0', 10)).reduce(
-                  (a, b) => a + b,
-                  0,
-                );
-                const bonus = upperSum > 62 ? 35 : 0;
-                const lowerSum = LOWER_CATEGORIES.map((cat) => parseInt(round[player]?.[cat] || '0', 10)).reduce(
-                  (a, b) => a + b,
-                  0,
-                );
-                totals[player] = upperSum + bonus + lowerSum;
+                const playerScores = round[player] || {};
+                totals[player] = calculateRoundTotal(playerScores);
               });
               return totals;
             })}
