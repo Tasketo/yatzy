@@ -24,6 +24,7 @@ export function useYatzyGame() {
       try {
         const { players, scoresPerRound, playerColors, currentRound, page } = JSON.parse(saved);
         if (players && scoresPerRound && playerColors) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setPlayers(players);
           setScoresPerRound(scoresPerRound);
           setPlayerColors(playerColors);
