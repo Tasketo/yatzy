@@ -91,20 +91,24 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('add-player-btn').click();
     await page.getByTestId('player-input-2').fill('Bob');
     await page.getByTestId('start-btn').click();
-    // Fill round 1
+    // Fill round 1 with values that satisfy validation rules
+    const aliceRound1 = ['1', '2', '3', '4', '5', '6', '2', '4', '6', '8', '30', '40', '25', '10', '50'];
+    const bobRound1 = ['2', '4', '6', '8', '10', '12', '4', '8', '12', '16', '30', '40', '25', '20', '50'];
     for (let i = 0; i < 15; i++) {
-      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('1');
-      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill('2');
+      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound1[i]);
+      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound1[i]);
     }
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Bob');
     await page.getByTestId('play-new-round-btn').click();
 
-    // Fill round 2
+    // Fill round 2 with other valid values
+    const aliceRound2 = ['3', '6', '9', '12', '15', '18', '6', '12', '18', '24', '30', '40', '25', '30', '50'];
+    const bobRound2 = ['4', '8', '12', '16', '20', '24', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
     for (let i = 0; i < 15; i++) {
-      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('3');
-      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill('4');
+      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound2[i]);
+      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound2[i]);
     }
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
@@ -118,20 +122,24 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('add-player-btn').click();
     await page.getByTestId('player-input-2').fill('Bob');
     await page.getByTestId('start-btn').click();
-    // Round 1: Alice wins
+    // Round 1: Alice wins (valid values)
+    const aliceRound1 = ['5', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
+    const bobRound1 = ['1', '2', '3', '4', '5', '6', '2', '4', '6', '8', '30', '40', '25', '10', '50'];
     for (let i = 0; i < 15; i++) {
-      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('5');
-      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill('1');
+      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound1[i]);
+      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound1[i]);
     }
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Alice');
     await page.getByTestId('play-new-round-btn').click();
     await expect(page.getByTestId('score-sheet')).toBeVisible();
-    // Round 2: Bob wins
+    // Round 2: Bob wins (valid values)
+    const aliceRound2 = ['1', '2', '3', '4', '5', '6', '2', '4', '6', '8', '30', '40', '25', '10', '50'];
+    const bobRound2 = ['5', '4', '3', '8', '10', '12', '8', '16', '18', '24', '30', '40', '25', '30', '50'];
     for (let i = 0; i < 15; i++) {
-      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('1');
-      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill('5');
+      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceRound2[i]);
+      await page.getByTestId(`score-input-row-${i + 1}-Bob`).fill(bobRound2[i]);
     }
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
@@ -180,8 +188,10 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('player-input-1').fill('Alice');
     await page.getByTestId('start-btn').click();
 
+    // Use valid values to satisfy validation
+    const aliceValues = ['3', '6', '9', '12', '15', '18', '6', '12', '18', '24', '30', '40', '25', '30', '50'];
     for (let i = 0; i < 15; i++) {
-      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill('3');
+      await page.getByTestId(`score-input-row-${i + 1}-Alice`).fill(aliceValues[i]);
     }
     await page.getByTestId('finish-round-btn').click();
 
