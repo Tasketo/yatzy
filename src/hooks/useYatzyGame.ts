@@ -18,6 +18,7 @@ export function useYatzyGame() {
   const [currentRound, setCurrentRound] = useState<number>(0);
   const [playerColors, setPlayerColors] = useState<Record<PlayerName, string>>({});
   const [page, setPage] = useState<Page>('game');
+  const [submitAttempted, setSubmitAttempted] = useState<boolean>(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('yatzy-state');
@@ -67,6 +68,7 @@ export function useYatzyGame() {
     setScoresPerRound([initialScores]);
     setCurrentRound(0);
     setPage('game');
+    setSubmitAttempted(false);
     const colors: Record<PlayerName, string> = {};
     const used: string[] = [];
     names.forEach((name) => {
@@ -119,6 +121,7 @@ export function useYatzyGame() {
     !!players && players.every((p) => Object.values(validationErrors[p] || {}).every((v) => v === null));
 
   const handleFinishRound = useCallback(() => {
+    setSubmitAttempted(true);
     if (!allFieldsValid) return;
     setPage('scoreboard');
   }, [allFieldsValid]);
@@ -135,6 +138,7 @@ export function useYatzyGame() {
     setScoresPerRound((prev) => [...prev, newScores]);
     setCurrentRound(scoresPerRound.length);
     setPage('game');
+    setSubmitAttempted(false);
   }, [players, scoresPerRound.length]);
 
   const handleGoToRound = useCallback((idx: number) => {
@@ -149,6 +153,7 @@ export function useYatzyGame() {
     setPlayerColors({});
     setCurrentRound(0);
     setPage('game');
+    setSubmitAttempted(false);
   }, []);
 
   return {
@@ -160,6 +165,7 @@ export function useYatzyGame() {
     allFieldsFilled,
     validationErrors,
     allFieldsValid,
+    submitAttempted,
     handlePlayersSubmit,
     handleScoreChange,
     handleFinishRound,

@@ -28,6 +28,7 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   if (n > 999) return { valid: false, reason: 'Too large' };
 
   // Upper categories: value must be divisible by the face (Ones=1, Twos=2...)
+  // Note: 0 is valid for all upper categories (0 % any number === 0)
   const upperIndex = UPPER_CATEGORIES.indexOf(category);
   if (upperIndex !== -1) {
     const face = upperIndex + 1;
@@ -37,6 +38,7 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   }
 
   // Fixed-score lower categories
+  // Note: 0 is NOT valid for fixed categories (must match exact fixed value)
   if (Object.prototype.hasOwnProperty.call(FIXED_SCORES, category)) {
     const fixed = FIXED_SCORES[category];
     if (n !== fixed) return { valid: false, reason: `Must be exactly ${fixed}` };

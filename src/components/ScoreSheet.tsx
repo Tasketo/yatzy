@@ -16,6 +16,7 @@ interface ScoreSheetProps {
   playerColors: Record<string, string>;
   onPlayerColorChange?: (player: string) => void;
   validationErrors?: Record<string, Record<YatzyCategory, string | null>>;
+  submitAttempted?: boolean;
 }
 
 export const ScoreSheet: React.FC<ScoreSheetProps> = ({
@@ -25,6 +26,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   playerColors,
   onPlayerColorChange,
   validationErrors,
+  submitAttempted,
 }) => {
   const { t } = useTranslation();
   // Track previous values for animation
@@ -33,6 +35,15 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
   useEffect(() => {
     prevScores.current = scores;
   }, [scores]);
+
+  // Determine if error should be shown: only show "Required" errors on submit attempt
+  const shouldShowError = (err: string | null, fieldValue: string) => {
+    if (!err) return false;
+    // Always show non-"Required" errors
+    if (err !== 'Required') return true;
+    // Show "Required" only if submit was attempted or field is non-empty
+    return submitAttempted || fieldValue.trim() !== '';
+  };
 
   // Modal state for category info
   const { open, onOpen, onClose } = useDisclosure();
@@ -102,6 +113,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 {players.map((player) => {
                   const curr = scores[player]?.[category];
                   const err = validationErrors?.[player]?.[category] ?? null;
+                  const showErr = shouldShowError(err, curr || '');
                   return (
                     <Table.Cell key={player} color={playerColors[player]}>
                       <ChakraInput
@@ -114,11 +126,11 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                         inputMode="numeric"
                         color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1}-${player}`}
-                        aria-invalid={!!err}
-                        aria-describedby={err ? `err-${player}-${category.replace(/\s+/g, '-')}` : undefined}
+                        aria-invalid={showErr}
+                        aria-describedby={showErr ? `err-${player}-${category.replace(/\s+/g, '-')}` : undefined}
                         size="sm"
                       />
-                      {err ? (
+                      {showErr ? (
                         <Box
                           id={`err-${player}-${category.replace(/\s+/g, '-')}`}
                           mt={1}
@@ -211,6 +223,7 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                 {players.map((player) => {
                   const curr = scores[player]?.[category as YatzyCategory];
                   const err = validationErrors?.[player]?.[category as YatzyCategory] ?? null;
+                  const showErr = shouldShowError(err, curr || '');
                   return (
                     <Table.Cell key={player} color={playerColors[player]}>
                       <ChakraInput
@@ -223,13 +236,13 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({
                         inputMode="numeric"
                         color={playerColors[player]}
                         data-testid={`score-input-row-${idx + 1 + UPPER_CATEGORIES.length}-${player}`}
-                        aria-invalid={!!err}
+                        aria-invalid={showErr}
                         aria-describedby={
-                          err ? `err-${player}-${(category as string).replace(/\s+/g, '-')}` : undefined
+                          showErr ? `err-${player}-${(category as string).replace(/\s+/g, '-')}` : undefined
                         }
                         size="sm"
                       />
-                      {err ? (
+                      {showErr ? (
                         <Box
                           id={`err-${player}-${(category as string).replace(/\s+/g, '-')}`}
                           mt={1}

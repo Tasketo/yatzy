@@ -22,6 +22,7 @@ function App() {
     // allFieldsFilled (deprecated) is no longer used; validation is via allFieldsValid
     validationErrors,
     allFieldsValid,
+    submitAttempted,
     handlePlayersSubmit,
     handleScoreChange,
     handleFinishRound,
@@ -111,6 +112,7 @@ function App() {
             playerColors={playerColors}
             onPlayerColorChange={handlePlayerColorChange}
             validationErrors={validationErrors}
+            submitAttempted={submitAttempted}
           />
           <Box mt={6} textAlign="center">
             <Button
