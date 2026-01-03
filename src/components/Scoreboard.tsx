@@ -66,7 +66,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
             </Table.Row>
           ))}
           <Table.Row data-testid="scoreboard-total-row">
-            <Table.Cell>Total points</Table.Cell>
+            <Table.Cell fontWeight={700}>
+              <Trans>Total points</Trans>
+            </Table.Cell>
             {players.map((player) => (
               <Table.Cell key={player} fontWeight={700}>
                 {totals[player]}
