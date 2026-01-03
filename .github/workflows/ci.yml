@@ -55,6 +55,8 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Enable auto-merge for dependabot PR
         run: gh pr merge --auto --squash ${{ github.event.pull_request.number }}
         env:
