@@ -9,7 +9,7 @@ import { getRandomColor } from './utils/getRandomColor';
 import { calculateRoundTotal } from './utils/calculateScores';
 import { ResetConfirmationDialog } from './components/ResetConfirmationDialog';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useColorMode, useColorModeValue } from './components/ui/color-mode-hooks';
 
 function App() {
@@ -143,7 +143,7 @@ function App() {
           />
           <Box mt={6} textAlign="center">
             <Button onClick={handlePlayNewRound} data-testid="play-new-round-btn" colorScheme="blue">
-              Play new round
+              <Trans>Play new round</Trans>
             </Button>
           </Box>
         </Box>
@@ -151,7 +151,7 @@ function App() {
       {players && (
         <Box mb={5} mt={5} textAlign="center">
           <Button colorScheme="red" variant="outline" data-testid="reset-btn" onClick={onOpen}>
-            Reset game
+            <Trans>Reset game</Trans>
           </Button>
           <ResetConfirmationDialog
             isOpen={open}

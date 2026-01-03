@@ -66,7 +66,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
             </Table.Row>
           ))}
           <Table.Row data-testid="scoreboard-total-row">
-            <Table.Cell>Total points</Table.Cell>
+            <Table.Cell fontWeight={700}>
+              <Trans>Total points</Trans>
+            </Table.Cell>
             {players.map((player) => (
               <Table.Cell key={player} fontWeight={700}>
                 {totals[player]}
@@ -94,11 +96,11 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
       </Table.Root>
       {overallWinners.length === 1 ? (
         <Text mt={4} fontWeight={700} color={playerColors[overallWinners[0]]} data-testid="overall-winner">
-          Winner: {overallWinners[0]}
+          <Trans>Winner</Trans>: {overallWinners[0]}
         </Text>
       ) : (
         <Text mt={4} fontWeight={700} data-testid="overall-winner">
-          Winners: {overallWinners.join(', ')}
+          <Trans>Winners</Trans>: {overallWinners.join(', ')}
         </Text>
       )}
     </Box>

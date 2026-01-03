@@ -24,15 +24,18 @@ function parseInteger(value: string): number | null {
   return n;
 }
 
-export function isValidCategoryValue(category: YatzyCategory, value: string): { valid: boolean; reason?: string } {
+export function isValidCategoryValue(
+  category: YatzyCategory,
+  value: string,
+): { valid: boolean; reasonKey?: string; messageParams?: Record<string, string | number> } {
   if (value === undefined || value === null || value.toString().trim() === '') {
-    return { valid: false, reason: 'Required' };
+    return { valid: false, reasonKey: 'Required' };
   }
 
   const n = parseInteger(value);
-  if (n === null) return { valid: false, reason: 'Required' };
-  if (Number.isNaN(n)) return { valid: false, reason: 'Must be an integer' };
-  if (n < 0) return { valid: false, reason: 'Must be non-negative' };
+  if (n === null) return { valid: false, reasonKey: 'Required' };
+  if (Number.isNaN(n)) return { valid: false, reasonKey: 'Must be an integer' };
+  if (n < 0) return { valid: false, reasonKey: 'Must be non-negative' };
 
   // Upper categories: value must be divisible by the face (Ones=1, Twos=2...)
   // With 5 dice, max is 5 * face value (e.g., Sixes max is 30)
@@ -42,10 +45,10 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
     const face = upperIndex + 1;
     const maxForCategory = 5 * face; // 5 dice max
     if (n > maxForCategory) {
-      return { valid: false, reason: `Maximum is ${maxForCategory}` };
+      return { valid: false, reasonKey: 'Maximum is {{max}}', messageParams: { max: maxForCategory } };
     }
     if (n % face !== 0) {
-      return { valid: false, reason: `Must be divisible by ${face}` };
+      return { valid: false, reasonKey: 'Must be divisible by {{divisor}}', messageParams: { divisor: face } };
     }
     return { valid: true };
   }
@@ -54,7 +57,7 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   if (Object.prototype.hasOwnProperty.call(LOWER_CATEGORY_MAXES, category)) {
     const max = LOWER_CATEGORY_MAXES[category];
     if (n > max) {
-      return { valid: false, reason: `Maximum is ${max}` };
+      return { valid: false, reasonKey: 'Maximum is {{max}}', messageParams: { max } };
     }
   }
 
@@ -62,19 +65,25 @@ export function isValidCategoryValue(category: YatzyCategory, value: string): { 
   // Note: 0 is valid (represents "no score in this category"); otherwise must match exact fixed value
   if (Object.prototype.hasOwnProperty.call(FIXED_SCORES, category)) {
     const fixed = FIXED_SCORES[category];
-    if (n !== 0 && n !== fixed) return { valid: false, reason: `Must be exactly ${fixed}` };
+    if (n !== 0 && n !== fixed)
+      return { valid: false, reasonKey: 'Must be exactly {{value}}', messageParams: { value: fixed } };
   }
 
   return { valid: true };
 }
 
-export function validateRoundScores(scores: Record<YatzyCategory, string>): Record<YatzyCategory, string | null> {
-  const result = {} as Record<YatzyCategory, string | null>;
+export function validateRoundScores(
+  scores: Record<YatzyCategory, string>,
+): Record<YatzyCategory, { reasonKey?: string; messageParams?: Record<string, string | number> } | null> {
+  const result = {} as Record<
+    YatzyCategory,
+    { reasonKey?: string; messageParams?: Record<string, string | number> } | null
+  >;
   Object.keys(scores).forEach((k) => {
     const cat = k as YatzyCategory;
     const val = scores[cat];
     const check = isValidCategoryValue(cat, val);
-    result[cat] = check.valid ? null : check.reason || 'Invalid';
+    result[cat] = check.valid ? null : { reasonKey: check.reasonKey, messageParams: check.messageParams };
   });
   return result;
 }

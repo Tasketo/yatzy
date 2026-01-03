@@ -14,7 +14,10 @@ interface ScoreSheetProps {
   onScoreChange: (player: string, category: YatzyCategory, value: string) => void;
   playerColors: Record<string, string>;
   onPlayerColorChange?: (player: string) => void;
-  validationErrors?: Record<string, Record<YatzyCategory, string | null>>;
+  validationErrors?: Record<
+    string,
+    Record<YatzyCategory, { reasonKey?: string; messageParams?: Record<string, string | number> } | null>
+  >;
   submitAttempted?: boolean;
 }
 
