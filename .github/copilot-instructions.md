@@ -2,7 +2,7 @@
 
 This project is a React web application built with Vite and TypeScript. The goal is to create a form for the game Yatzy. Please follow best practices for React, TypeScript, and modern frontend development.
 
-For all new features add playwright tests to cover 100% of the code.
+For all new features add playwright tests to cover 100% of the code. If new labels are introduced, make sure to add translations for English and German in the [i18n.ts](../src/i18n.ts) file.
 
 When changing the code make sure to fix linting and testing errors. Here are the commands to run:
 

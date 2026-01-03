@@ -101,6 +101,11 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Bob');
+    // Verify wins row shows 1 win for Bob (winner of round 1)
+    const winsRow = page.getByTestId('scoreboard-wins-row');
+    await expect(winsRow).toBeVisible();
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(2)).toContainText('1'); // Bob
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(1)).toContainText('0'); // Alice
     await page.getByTestId('play-new-round-btn').click();
 
     // Fill round 2 with other valid values
@@ -114,6 +119,11 @@ test.describe('Yatzy App E2E', () => {
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByText('Alice')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Bob');
+    // Verify wins row shows 2 wins for Bob (winner of both rounds)
+    const winsRow2 = page.getByTestId('scoreboard-wins-row');
+    await expect(winsRow2).toBeVisible();
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(2)).toContainText('2'); // Bob
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(1)).toContainText('0'); // Alice
   });
 
   test('shows tie if each player wins one round', async ({ page }) => {
@@ -132,6 +142,11 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Alice');
+    // Verify wins row shows 1 win for Alice
+    let winsRow = page.getByTestId('scoreboard-wins-row');
+    await expect(winsRow).toBeVisible();
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(1)).toContainText('1'); // Alice
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(2)).toContainText('0'); // Bob
     await page.getByTestId('play-new-round-btn').click();
     await expect(page.getByTestId('score-sheet')).toBeVisible();
     // Round 2: Bob wins (valid values)
@@ -145,6 +160,11 @@ test.describe('Yatzy App E2E', () => {
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     // Both should be shown as winners (tie)
     await expect(page.getByTestId('overall-winner')).toContainText('Winners: Alice, Bob');
+    // Verify wins row shows 1 win for each player (tie)
+    winsRow = page.getByTestId('scoreboard-wins-row');
+    await expect(winsRow).toBeVisible();
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(1)).toContainText('1'); // Alice
+    await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(2)).toContainText('1'); // Bob
   });
 
   test('Game state persists in localStorage after reload', async ({ page }) => {
