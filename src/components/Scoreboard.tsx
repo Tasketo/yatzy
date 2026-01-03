@@ -96,11 +96,11 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
       </Table.Root>
       {overallWinners.length === 1 ? (
         <Text mt={4} fontWeight={700} color={playerColors[overallWinners[0]]} data-testid="overall-winner">
-          Winner: {overallWinners[0]}
+          <Trans>Winner</Trans>: {overallWinners[0]}
         </Text>
       ) : (
         <Text mt={4} fontWeight={700} data-testid="overall-winner">
-          Winners: {overallWinners.join(', ')}
+          <Trans>Winners</Trans>: {overallWinners.join(', ')}
         </Text>
       )}
     </Box>

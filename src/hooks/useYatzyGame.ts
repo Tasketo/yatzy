@@ -76,8 +76,15 @@ export function useYatzyGame() {
   const [submitAttempted, setSubmitAttempted] = useState<boolean>(false);
 
   const validationErrors = useMemo(() => {
-    if (!players || !scoresPerRound[currentRound]) return {} as Record<string, Record<YatzyCategory, string | null>>;
-    const out: Record<string, Record<YatzyCategory, string | null>> = {};
+    if (!players || !scoresPerRound[currentRound])
+      return {} as Record<
+        string,
+        Record<YatzyCategory, { reasonKey?: string; messageParams?: Record<string, string | number> } | null>
+      >;
+    const out: Record<
+      string,
+      Record<YatzyCategory, { reasonKey?: string; messageParams?: Record<string, string | number> } | null>
+    > = {};
     players.forEach((p) => {
       const playerScores = scoresPerRound[currentRound][p] || ({} as Record<YatzyCategory, string>);
       out[p] = validateRoundScores(playerScores);
