@@ -1,7 +1,9 @@
 import React from 'react';
 import { getRoundWinners } from '../utils/getRoundWinners';
-import { Table, Box, Text } from '@chakra-ui/react';
+import { Table, Box, Button, Text } from '@chakra-ui/react';
 import { Trans } from 'react-i18next';
+
+const ROUND_BATCH_SIZE = 25;
 
 interface ScoreboardProps {
   players: string[];
@@ -10,6 +12,8 @@ interface ScoreboardProps {
 }
 
 export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerColors }) => {
+  const [visibleRoundCount, setVisibleRoundCount] = React.useState(ROUND_BATCH_SIZE);
+
   // Calculate total per player
   const totals: Record<string, number> = {};
   players.forEach((player) => {
@@ -25,6 +29,15 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
     roundWins[player] = roundWinners.filter((winners) => winners.includes(player)).length;
   });
 
+  // Find the highest and lowest round score for each player
+  const highestScores: Record<string, number> = {};
+  const lowestScores: Record<string, number> = {};
+  players.forEach((player) => {
+    const playerScores = rounds.map((round) => round[player] ?? 0);
+    highestScores[player] = playerScores.length > 0 ? Math.max(...playerScores) : 0;
+    lowestScores[player] = playerScores.length > 0 ? Math.min(...playerScores) : 0;
+  });
+
   // Find player(s) with the most round wins
   const maxWins = Math.max(...Object.values(roundWins));
   const overallWinners = players.filter((player) => roundWins[player] === maxWins && maxWins > 0);
@@ -34,6 +47,15 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
       <Text as="h2" fontSize="xl" fontWeight="bold" mb={4} color="gray.800" _dark={{ color: 'gray.100' }}>
         <Trans>Scoreboard</Trans>
       </Text>
+      {visibleRoundCount < rounds.length && (
+        <Button
+          mb={4}
+          data-testid="show-more-rounds-btn"
+          onClick={() => setVisibleRoundCount((count) => count + ROUND_BATCH_SIZE)}
+        >
+          <Trans>Show more</Trans>
+        </Button>
+      )}
       <Table.Root size="sm">
         <Table.Header>
           <Table.Row>
@@ -48,23 +70,26 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {rounds.map((round, idx) => (
-            <Table.Row key={idx} data-testid={`scoreboard-row-${idx}`}>
-              <Table.Cell>{idx + 1}</Table.Cell>
-              {players.map((player) => (
-                <Table.Cell key={player} fontWeight={roundWinners[idx].includes(player) ? 700 : undefined}>
-                  {round[player] ?? '-'}
-                  {roundWinners[idx].includes(player) ? (
-                    <span role="img" aria-label="Winner" className="trophy-animate">
-                      🏆
-                    </span>
-                  ) : (
-                    ''
-                  )}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
+          {rounds.slice(Math.max(0, rounds.length - visibleRoundCount)).map((round, idx) => {
+            const roundIndex = Math.max(0, rounds.length - visibleRoundCount) + idx;
+            return (
+              <Table.Row key={roundIndex} data-testid={`scoreboard-row-${roundIndex}`}>
+                <Table.Cell>{roundIndex + 1}</Table.Cell>
+                {players.map((player) => (
+                  <Table.Cell key={player} fontWeight={roundWinners[roundIndex].includes(player) ? 700 : undefined}>
+                    {round[player] ?? '-'}
+                    {roundWinners[roundIndex].includes(player) ? (
+                      <span role="img" aria-label="Winner" className="trophy-animate">
+                        🏆
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            );
+          })}
           <Table.Row data-testid="scoreboard-total-row">
             <Table.Cell fontWeight={700}>
               <Trans>Total points</Trans>
@@ -89,6 +114,26 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ players, rounds, playerC
             {players.map((player) => (
               <Table.Cell key={player} fontWeight={700}>
                 {roundWins[player]}
+              </Table.Cell>
+            ))}
+          </Table.Row>
+          <Table.Row data-testid="scoreboard-highest-row">
+            <Table.Cell fontWeight={700}>
+              <Trans>Highest score</Trans>
+            </Table.Cell>
+            {players.map((player) => (
+              <Table.Cell key={player} fontWeight={700}>
+                {highestScores[player]}
+              </Table.Cell>
+            ))}
+          </Table.Row>
+          <Table.Row data-testid="scoreboard-lowest-row">
+            <Table.Cell fontWeight={700}>
+              <Trans>Lowest score</Trans>
+            </Table.Cell>
+            {players.map((player) => (
+              <Table.Cell key={player} fontWeight={700}>
+                {lowestScores[player]}
               </Table.Cell>
             ))}
           </Table.Row>
