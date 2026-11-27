@@ -101,6 +101,7 @@ test.describe('Yatzy App E2E', () => {
     await page.getByTestId('finish-round-btn').click();
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Bob');
+    await expect(page.getByTestId('show-more-round-nav-btn')).toHaveCount(0);
     // Verify wins row shows 1 win for Bob (winner of round 1)
     const winsRow = page.getByTestId('scoreboard-wins-row');
     await expect(winsRow).toBeVisible();
@@ -152,6 +153,19 @@ test.describe('Yatzy App E2E', () => {
 
     await page.goto('/');
     await expect(page.getByTestId('scoreboard')).toBeVisible();
+    await expect(page.getByTestId('round-btn-24')).toBeVisible();
+    await expect(page.getByTestId('round-btn-25')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="round-btn-"]')).toHaveCount(25);
+    const showMoreRoundNavButton = page.getByTestId('show-more-round-nav-btn');
+    await expect(showMoreRoundNavButton).toBeVisible();
+    await showMoreRoundNavButton.click();
+    await expect(page.getByTestId('round-btn-25')).toBeVisible();
+    await expect(page.locator('[data-testid^="round-btn-"]')).toHaveCount(50);
+    await showMoreRoundNavButton.click();
+    await expect(page.getByTestId('round-btn-50')).toBeVisible();
+    await expect(page.locator('[data-testid^="round-btn-"]')).toHaveCount(51);
+    await expect(showMoreRoundNavButton).toHaveCount(0);
+
     await expect(page.getByTestId('scoreboard-row-26')).toBeVisible();
     await expect(page.getByTestId('scoreboard-row-50')).toBeVisible();
     await expect(page.getByTestId('scoreboard-row-25')).toHaveCount(0);
