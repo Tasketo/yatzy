@@ -119,11 +119,53 @@ test.describe('Yatzy App E2E', () => {
     await expect(page.getByTestId('scoreboard')).toBeVisible();
     await expect(page.getByText('Alice')).toBeVisible();
     await expect(page.getByTestId('overall-winner')).toContainText('Bob');
+    await expect(page.getByTestId('scoreboard-highest-row')).toBeVisible();
+    await expect(page.getByTestId('scoreboard-lowest-row')).toBeVisible();
+    // Verify each player's highest and lowest round totals
+    await expect(page.locator('[data-testid="scoreboard-highest-row"] td').nth(1)).toContainText('333');
+    await expect(page.locator('[data-testid="scoreboard-lowest-row"] td').nth(1)).toContainText('196');
+    await expect(page.locator('[data-testid="scoreboard-highest-row"] td').nth(2)).toContainText('360');
+    await expect(page.locator('[data-testid="scoreboard-lowest-row"] td').nth(2)).toContainText('247');
     // Verify wins row shows 2 wins for Bob (winner of both rounds)
     const winsRow2 = page.getByTestId('scoreboard-wins-row');
     await expect(winsRow2).toBeVisible();
     await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(2)).toContainText('2'); // Bob
     await expect(page.locator('[data-testid="scoreboard-wins-row"] td').nth(1)).toContainText('0'); // Alice
+  });
+
+  test('shows the latest 25 rounds and reveals older rounds in batches', async ({ page }) => {
+    const scoresPerRound = Array.from({ length: 51 }, (_, index) => ({
+      Alice: { Chance: String(index + 1) },
+    }));
+    await page.addInitScript(
+      (state) => {
+        localStorage.setItem('yatzy-state', JSON.stringify(state));
+      },
+      {
+        players: ['Alice'],
+        scoresPerRound,
+        playerColors: { Alice: 'blue' },
+        currentRound: 50,
+        page: 'scoreboard',
+      },
+    );
+
+    await page.goto('/');
+    await expect(page.getByTestId('scoreboard')).toBeVisible();
+    await expect(page.getByTestId('scoreboard-row-26')).toBeVisible();
+    await expect(page.getByTestId('scoreboard-row-50')).toBeVisible();
+    await expect(page.getByTestId('scoreboard-row-25')).toHaveCount(0);
+    await expect(page.locator('[data-testid^="scoreboard-row-"]')).toHaveCount(25);
+
+    const showMoreButton = page.getByTestId('show-more-rounds-btn');
+    await expect(showMoreButton).toBeVisible();
+    await showMoreButton.click();
+    await expect(page.getByTestId('scoreboard-row-1')).toBeVisible();
+    await expect(page.locator('[data-testid^="scoreboard-row-"]')).toHaveCount(50);
+
+    await showMoreButton.click();
+    await expect(page.locator('[data-testid^="scoreboard-row-"]')).toHaveCount(51);
+    await expect(showMoreButton).toHaveCount(0);
   });
 
   test('shows tie if each player wins one round', async ({ page }) => {
